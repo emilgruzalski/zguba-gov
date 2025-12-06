@@ -14,16 +14,22 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'rzeczy-znalezione' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('rzeczy-znalezione');
-  });
-
-  it('should render title', () => {
+  it('should render portal title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, rzeczy-znalezione');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Portal Rzeczy Znalezionych');
+  });
+
+  it('should have form group', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.form).toBeTruthy();
+  });
+
+  it('should start at step 1', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.currentStep).toEqual(1);
   });
 });
