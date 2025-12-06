@@ -112,9 +112,13 @@ export class AppComponent implements OnInit {
   }
 
   selectUnit(unit: TerritorialUnit): void {
+    // Generuj sugerowany email
+    const suggestedEmail = this.territorialUnitsService.generateContactEmail(unit);
+    
     this.form.patchValue({
       municipalityName: unit.name,
-      municipalityType: unit.type
+      municipalityType: unit.type,
+      contactEmail: suggestedEmail
     });
     this.showAutocomplete = false;
     this.filteredUnits = [];
