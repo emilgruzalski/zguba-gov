@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TerritorialUnitsService, TerritorialUnit } from './services/territorial-units.service';
+import { FoundItemsService, FoundItemCreate, FoundItemResponse } from './services/found-items.service';
 
 interface FoundItem {
   id: string;
@@ -74,7 +75,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private territorialUnitsService: TerritorialUnitsService
+    private territorialUnitsService: TerritorialUnitsService,
+    private foundItemsService: FoundItemsService
   ) {
     this.form = this.initializeForm();
   }
@@ -260,8 +262,7 @@ export class AppComponent implements OnInit {
   }
 
   submitData(): void {
-    const newItem: FoundItem = {
-      id: this.generateId(),
+    const payload: FoundItemCreate = {
       municipality: {
         name: this.form.value.municipalityName,
         type: this.form.value.municipalityType,
@@ -281,15 +282,23 @@ export class AppComponent implements OnInit {
         hours: this.form.value.pickupHours,
         contact: this.form.value.contactPerson
       },
-      categories: this.form.value.categories,
-      createdAt: new Date().toISOString()
+      categories: this.form.value.categories || []
     };
 
-    this.items.push(newItem);
-    this.saveItems();
-    alert('✓ Dane zostały pomyślnie udostępnione!');
-    this.resetForm();
-    this.currentStep = 1;
+    this.foundItemsService.create(payload).subscribe({
+      next: (created: FoundItemResponse) => {
+        // Prepend to list
+        this.items.unshift(created as any);
+        this.saveItems();
+        alert('✓ Dane zostały pomyślnie udostępnione!');
+        this.resetForm();
+        this.currentStep = 1;
+      },
+      error: (err) => {
+        console.error('Błąd przy zapisie na backendzie', err);
+        alert('Nie udało się zapisać danych na serwerze. Sprawdź konsolę.');
+      }
+    });
   }
 
   exportJSON(): void {
@@ -385,14 +394,27 @@ export class AppComponent implements OnInit {
   }
 
   private saveItems(): void {
-    localStorage.setItem('foundItems', JSON.stringify(this.items));
+    // keep a local cache as fallback; primary storage is backend
+    try {
+      localStorage.setItem('foundItems', JSON.stringify(this.items));
+    } catch (e) {
+      console.warn('Nie można zapisać do localStorage', e);
+    }
   }
 
   private loadItems(): void {
-    const stored = localStorage.getItem('foundItems');
-    if (stored) {
-      this.items = JSON.parse(stored);
-    }
+    // Try to load from backend first, fallback to localStorage
+    this.foundItemsService.list(0, 100).subscribe({
+      next: (data) => {
+        this.items = data as any;
+        this.saveItems();
+      },
+      error: (err) => {
+        console.warn('Nie można pobrać listy z backendu, używam localStorage', err);
+        const stored = localStorage.getItem('foundItems');
+        if (stored) this.items = JSON.parse(stored);
+      }
+    });
   }
 
   private resetForm(): void {
