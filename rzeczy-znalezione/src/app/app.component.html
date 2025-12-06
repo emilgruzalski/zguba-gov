@@ -68,13 +68,15 @@
         <h2 class="step-title">Krok 2/5: Kategorie Rzeczy Znalezionych</h2>
         <p class="step-description">Wybierz główne kategorie rzeczy znalezionych</p>
         
-        <div id="categoryCheckboxes" formArrayName="categories">
-          <label *ngFor="let cat of categories; let i = index" style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; margin-bottom: 12px;">
+        <div id="categoryCheckboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 25px;">
+          <label *ngFor="let cat of categories" style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer; padding: 12px; background: #f9f9f9; border-radius: 6px; border: 2px solid #e0e0e0; transition: all 0.2s ease;">
             <input 
               type="checkbox" 
               [value]="cat.value" 
-              (change)="toggleCategory(cat.value)">
-            {{ cat.label }}
+              (change)="toggleCategory(cat.value)"
+              [checked]="form.get('categories')?.value?.includes(cat.value)"
+              style="width: 20px; height: 20px; cursor: pointer;">
+            <span style="font-weight: 500; color: #333;">{{ cat.label }}</span>
           </label>
         </div>
 
