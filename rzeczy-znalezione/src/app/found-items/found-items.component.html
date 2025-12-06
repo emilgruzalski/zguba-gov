@@ -24,16 +24,6 @@
         <h2 class="step-title">Krok 1/5: Dane Samorządu</h2>
         <p class="step-description">Uzupełnij podstawowe informacje o samorządzie</p>
         
-        <div class="form-group">
-          <label for="municipalityName">Nazwa samorządu *</label>
-          <input 
-            type="text" 
-            id="municipalityName" 
-            formControlName="municipalityName"
-            placeholder="np. Powiat Warszawski"
-            required>
-        </div>
-
         <div class="form-row">
           <div class="form-group">
             <label for="municipalityType">Typ samorządu *</label>
@@ -47,6 +37,43 @@
               </option>
             </select>
           </div>
+        </div>
+
+        <div class="form-group" style="position: relative;">
+          <label for="municipalityName">Nazwa samorządu *</label>
+          <input 
+            type="text" 
+            id="municipalityName" 
+            formControlName="municipalityName"
+            placeholder="Zacznij pisać nazwę... (np. Warszawa, Powiat krakowski)"
+            (input)="onMunicipalityNameInput()"
+            (focus)="onMunicipalityNameInput()"
+            (blur)="hideAutocomplete()"
+            autocomplete="off"
+            required>
+          
+          <!-- Lista autouzupełniania -->
+          <div 
+            *ngIf="showAutocomplete && filteredUnits.length > 0" 
+            class="autocomplete-list">
+            <div 
+              *ngFor="let unit of filteredUnits" 
+              class="autocomplete-item"
+              (click)="selectUnit(unit)">
+              <strong>{{ unit.name }}</strong>
+              <span class="autocomplete-type">{{ unit.type }}</span>
+              <span class="autocomplete-context" *ngIf="unit.parentName">
+                woj. {{ unit.parentName }}
+              </span>
+            </div>
+          </div>
+          
+          <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+            💡 Wybierz najpierw typ samorządu, następnie zacznij pisać nazwę aby zobaczyć podpowiedzi
+          </small>
+        </div>
+
+        <div class="form-row">
           <div class="form-group">
             <label for="contactEmail">Email kontaktowy *</label>
             <input 
