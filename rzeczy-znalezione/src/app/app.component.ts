@@ -33,11 +33,13 @@ interface FoundItem {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
   currentStep: number = 1;
-  totalSteps: number = 5;
+  totalSteps: number = 4;
+  showErrorModal: boolean = false;
+  errorMessages: string[] = [];
   
   form: FormGroup;
   items: FoundItem[] = [];
@@ -107,8 +109,13 @@ export class AppComponent implements OnInit {
   }
 
   private showValidationError(): void {
-    const errors = this.getStepErrors(this.currentStep);
-    alert('❌ Błąd walidacji:\n\n' + errors.join('\n'));
+    this.errorMessages = this.getStepErrors(this.currentStep);
+    this.showErrorModal = true;
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+    this.errorMessages = [];
   }
 
   private getStepErrors(step: number): string[] {
@@ -130,11 +137,6 @@ export class AppComponent implements OnInit {
         }
         break;
       case 2:
-        if (!controls['categories'].value || controls['categories'].value.length === 0) {
-          errors.push('• Wybierz co najmniej jedną kategorię');
-        }
-        break;
-      case 3:
         if (!controls['itemName'].value?.trim()) {
           errors.push('• Nazwa przedmiotu jest wymagana');
         }
@@ -151,7 +153,7 @@ export class AppComponent implements OnInit {
           errors.push('• Status przedmiotu jest wymagany');
         }
         break;
-      case 4:
+      case 3:
         if (!controls['storageDeadline'].value || controls['storageDeadline'].value < 1 || controls['storageDeadline'].value > 365) {
           errors.push('• Termin przechowywania musi być między 1 a 365 dni');
         }
@@ -185,14 +187,12 @@ export class AppComponent implements OnInit {
                controls['contactEmail'].valid &&
                this.isValidEmail(controls['contactEmail'].value || '');
       case 2:
-        return controls['categories'].value && controls['categories'].value.length > 0;
-      case 3:
         return controls['itemName'].valid && 
                controls['itemCategory'].valid && 
                controls['itemDate'].valid && 
                controls['itemLocation'].valid && 
                controls['itemStatus'].valid;
-      case 4:
+      case 3:
         return controls['storageDeadline'].valid && 
                controls['pickupLocation'].valid;
       default:
