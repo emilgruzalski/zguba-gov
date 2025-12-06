@@ -6,12 +6,9 @@
       <div class="error-modal-title">
         ⚠️ Błąd walidacji
       </div>
-      <div class="error-modal-list">
-        <div class="error-item" *ngFor="let error of errorMessages">
-          <span class="error-icon">✕</span>
-          {{ error }}
-        </div>
-      </div>
+      <ul class="error-modal-list">
+        <li *ngFor="let error of errorMessages">{{ error }}</li>
+      </ul>
       <button class="error-modal-button" (click)="closeErrorModal()">Zamknij</button>
     </div>
   </div>
@@ -22,15 +19,26 @@
   </header>
 
   <div class="content">
-    <div class="progress-bar">
-      <div class="progress-fill" [style.width.%]="getProgress()"></div>
-    </div>
-
-    <div class="step-indicator">
-      <div *ngFor="let i of [1,2,3,4]" 
-           class="step-dot"
-           [ngClass]="{'active': isStepActive(i), 'completed': isStepCompleted(i)}">
-        {{ i }}
+    <div class="progress-section">
+      <div class="progress-container">
+        <div class="progress-line">
+          <div class="progress-fill" [style.width.%]="getProgress()"></div>
+        </div>
+        
+        <div class="progress-steps">
+          <div *ngFor="let i of [1,2,3,4]" class="progress-step" [ngClass]="{'active': isStepActive(i), 'completed': isStepCompleted(i)}">
+            <div class="step-circle">
+              <span *ngIf="isStepCompleted(i)" class="step-checkmark">✓</span>
+              <span *ngIf="!isStepCompleted(i)">{{ i }}</span>
+            </div>
+            <div class="step-label">
+              <span *ngIf="i === 1">Dane samorządu</span>
+              <span *ngIf="i === 2">Dane przedmiotu</span>
+              <span *ngIf="i === 3">Warunki odbioru</span>
+              <span *ngIf="i === 4">Podsumowanie</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -295,7 +303,7 @@
           <span style="color: #999; font-size: 13px; margin-left: 8px;">{{ item.item.date }}</span>
         </div>
         <div style="font-size: 13px; color: #666; margin-top: 8px;">
-          🏛️ {{ item.municipality.name }} 📍 {{ item.item.location }}
+          🏛️ {{ item.municipality.name }} • 📍 {{ item.item.location }}
         </div>
         <div style="font-size: 12px; color: #999; margin-top: 6px;">
           ID: {{ item.id }}
