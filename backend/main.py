@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from config import settings
 from database import init_db
 from routers import found_items_router, stats_router
+import re
 
 
 @asynccontextmanager
@@ -20,10 +21,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration
+# CORS configuration - allow all localhost ports for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
