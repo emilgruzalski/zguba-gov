@@ -1,4 +1,4 @@
-/* app.component.css - Modern & Clean Design */
+/* app.component.css - GOV.PL Design System */
 
 * {
   margin: 0;
@@ -8,7 +8,7 @@
 
 :host {
   display: block;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: var(--gov-gray-bg, #F5F5F5);
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -16,61 +16,35 @@
 .container {
   max-width: 900px;
   margin: 0 auto;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  background: var(--gov-white, #FFFFFF);
+  border-radius: 0;
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 82, 180, 0.12));
   overflow: hidden;
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
-/* Header */
+/* Header - GOV.PL style */
 header {
-  background: linear-gradient(135deg, #0f3a7d 0%, #1e5a96 100%);
+  background: var(--gov-blue, #0052B4);
   color: white;
-  padding: 50px 30px;
+  padding: 40px 30px;
   text-align: center;
   position: relative;
-  overflow: hidden;
-}
-
-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 400px;
-  height: 400px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 50%;
-}
-
-header::after {
-  content: '';
-  position: absolute;
-  bottom: -30%;
-  left: -5%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 50%;
+  border-bottom: 4px solid var(--gov-blue-dark, #003d87);
 }
 
 header h1 {
-  font-size: 36px;
-  font-weight: 800;
+  font-size: 32px;
+  font-weight: 700;
   margin-bottom: 10px;
-  position: relative;
-  z-index: 1;
   letter-spacing: -0.5px;
 }
 
 header p {
   font-size: 14px;
-  opacity: 0.9;
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
+  opacity: 0.95;
+  font-weight: 400;
 }
 
 .content {
@@ -79,11 +53,11 @@ header p {
 
 @media (max-width: 768px) {
   header {
-    padding: 35px 20px;
+    padding: 30px 20px;
   }
 
   header h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .content {
@@ -91,20 +65,19 @@ header p {
   }
 }
 
-/* Progress Bar */
+/* Progress Bar - GOV.PL colors */
 .progress-bar {
-  background: #e2e8f0;
-  height: 5px;
+  background: var(--gov-gray-light, #E8E8E8);
+  height: 4px;
   margin-bottom: 40px;
-  border-radius: 100px;
+  border-radius: 0;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #0f3a7d 0%, #2563eb 100%);
+  background: var(--gov-blue, #0052B4);
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 8px rgba(15, 58, 125, 0.3);
 }
 
 /* Step Indicator */
@@ -120,37 +93,35 @@ header p {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #e2e8f0;
-  color: #64748b;
+  background: var(--gov-gray-light, #E8E8E8);
+  color: var(--gov-gray-dark, #666666);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 14px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 16px;
+  transition: all 0.3s ease;
   flex: 1;
   max-width: 60px;
-  border: 2px solid transparent;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 3px solid transparent;
 }
 
 .step-dot:hover:not(.completed) {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
 }
 
 .step-dot.active {
-  background: linear-gradient(135deg, #0f3a7d 0%, #2563eb 100%);
+  background: var(--gov-blue, #0052B4);
   color: white;
-  box-shadow: 0 8px 16px rgba(15, 58, 125, 0.4);
-  transform: scale(1.12);
-  border-color: white;
+  box-shadow: 0 4px 12px rgba(0, 82, 180, 0.3);
+  transform: scale(1.1);
+  border-color: var(--gov-blue-dark, #003d87);
 }
 
 .step-dot.completed {
-  background: #10b981;
+  background: #22C55E;
   color: white;
-  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
 }
 
 /* Wizard Forms */
@@ -190,54 +161,50 @@ header p {
   font-weight: 500;
 }
 
-/* Form Styling */
+/* Form Styling - GOV.PL */
 .form-group {
   margin-bottom: 24px;
 }
 
 label {
   display: block;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: #1e293b;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--gov-text, #333333);
+  font-size: 14px;
 }
 
 input,
 select,
 textarea {
   width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
+  padding: 12px 14px;
+  border: 2px solid var(--gov-gray-light, #E8E8E8);
+  border-radius: 4px;
   font-size: 14px;
   font-family: inherit;
   transition: all 0.2s ease;
-  background: #f8fafc;
+  background: var(--gov-white, #FFFFFF);
+  color: var(--gov-text, #333333);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #cbd5e1;
-  font-weight: 500;
+  color: var(--gov-gray-dark, #666666);
 }
 
 input:hover,
 select:hover,
 textarea:hover {
-  border-color: #cbd5e1;
-  background: white;
+  border-color: var(--gov-blue-light, #4a90e2);
 }
 
 input:focus,
 select:focus,
 textarea:focus {
   outline: none;
-  border-color: #2563eb;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+  border-color: var(--gov-blue, #0052B4);
+  box-shadow: 0 0 0 3px rgba(0, 82, 180, 0.1);
 }
 
 textarea {
@@ -268,54 +235,51 @@ textarea {
 button {
   padding: 13px 28px;
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   flex: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  font-family: inherit;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0f3a7d 0%, #2563eb 100%);
+  background: var(--gov-blue, #0052B4);
   color: white;
-  box-shadow: 0 4px 12px rgba(15, 58, 125, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0d2855 0%, #1e40af 100%);
-  box-shadow: 0 8px 20px rgba(15, 58, 125, 0.4);
-  transform: translateY(-2px);
+  background: var(--gov-blue-dark, #003d87);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 82, 180, 0.2));
 }
 
 .btn-secondary {
-  background: #f1f5f9;
-  color: #1e293b;
-  border: 2px solid #cbd5e1;
-  font-weight: 700;
+  background: transparent;
+  color: var(--gov-blue, #0052B4);
+  border: 2px solid var(--gov-blue, #0052B4);
+  font-weight: 600;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: white;
-  border-color: #2563eb;
-  color: #2563eb;
+  background: var(--gov-blue, #0052B4);
+  color: white;
 }
 
-/* Summary */
+/* Summary - GOV.PL style */
 .summary {
-  background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
-  border-left: 5px solid #2563eb;
-  padding: 24px;
+  background: #F9FAFB;
+  border-left: 4px solid var(--gov-blue, #0052B4);
+  padding: 20px;
   margin-bottom: 28px;
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .summary-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   font-size: 14px;
   align-items: center;
   gap: 12px;
@@ -327,12 +291,10 @@ button {
 }
 
 .summary-label {
-  font-weight: 700;
-  color: #0f3a7d;
+  font-weight: 600;
+  color: var(--gov-text, #333333);
   min-width: 140px;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.5px;
+  font-size: 13px;
 }
 
 .summary-value {
@@ -437,26 +399,30 @@ button {
 }
 
 .error-modal-list {
-  list-style: none;
   margin-bottom: 24px;
+  list-style: none;
+  padding: 0;
+  margin-left: 0;
 }
 
-.error-modal-list li {
+.error-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-left: 0;
+  list-style: none;
   color: #1e3a8a;
   font-weight: 600;
-  margin-bottom: 12px;
-  padding-left: 28px;
-  position: relative;
   font-size: 14px;
   line-height: 1.6;
 }
 
-.error-modal-list li::before {
-  content: '✕';
-  position: absolute;
-  left: 0;
-  font-weight: bold;
+.error-icon {
   color: #eb2525;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 2px;
   font-size: 18px;
 }
 
@@ -490,30 +456,30 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Autouzupełnianie */
+/* Autouzupełnianie - GOV.PL style */
 .autocomplete-list {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid var(--gov-gray-light, #E8E8E8);
+  border-radius: 0;
+  box-shadow: var(--shadow-lg, 0 8px 24px rgba(0, 82, 180, 0.16));
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .autocomplete-item {
   padding: 12px 16px;
   cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--gov-gray-light, #E8E8E8);
   display: flex;
   flex-direction: column;
   gap: 4px;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s;
 }
 
 .autocomplete-item:last-child {
@@ -521,130 +487,25 @@ button:focus-visible {
 }
 
 .autocomplete-item:hover {
-  background: #f8f9fa;
+  background: #F5F8FA;
 }
 
 .autocomplete-type {
   display: inline-block;
-  background: #0066cc;
+  background: var(--gov-blue, #0052B4);
   color: white;
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 3px;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
   margin-left: 8px;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .autocomplete-context {
-  color: #666;
+  color: var(--gov-gray-dark, #666666);
   font-size: 12px;
   margin-left: 8px;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :host {
-    background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
-  }
-
-  .container {
-    background: #1e293b;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  }
-
-  header {
-    background: linear-gradient(135deg, #0a2563 0%, #1e40af 100%);
-  }
-
-  .content {
-    color: #e2e8f0;
-  }
-
-  .step-title {
-    color: #f1f5f9;
-  }
-
-  .step-description {
-    color: #cbd5e1;
-  }
-
-  label {
-    color: #f1f5f9;
-  }
-
-  input,
-  select,
-  textarea {
-    background: #334155;
-    color: #e2e8f0;
-    border-color: #475569;
-  }
-
-  input:hover,
-  select:hover,
-  textarea:hover {
-    background: #3f4651;
-    border-color: #2563eb;
-  }
-
-  .summary {
-    background: linear-gradient(135deg, #0a2563 0%, #1e40af 100%);
-    border-left-color: #60a5fa;
-  }
-
-  .summary-label {
-    color: #93c5fd;
-  }
-
-  .summary-value {
-    color: #e2e8f0;
-  }
-
-  .records-section h3 {
-    color: #93c5fd;
-  }
-
-  .record-item {
-    background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-    border-left-color: #3b82f6;
-    color: #e2e8f0;
-  }
-
-  .record-item strong {
-    color: #93c5fd;
-    font-weight: 800;
-  }
-
-  .record-item:hover {
-    background: linear-gradient(135deg, #0a2563 0%, #1e40af 100%);
-  }
-
-  .btn-secondary {
-    background: #334155;
-    color: #e2e8f0;
-    border-color: #475569;
-  }
-
-  .btn-secondary:hover {
-    background: #3f4651;
-    border-color: #2563eb;
-  }
-
-  .autocomplete-list {
-    background: #3d3d3d;
-    border-color: #555;
-  }
-
-  .autocomplete-item {
-    border-bottom-color: #555;
-  }
-
-  .autocomplete-item:hover {
-    background: #4d4d4d;
-  }
-
-  .autocomplete-context {
-    color: #a0a0a0;
-  }
-}

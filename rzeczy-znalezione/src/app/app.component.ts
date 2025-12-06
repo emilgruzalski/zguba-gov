@@ -184,40 +184,40 @@ export class AppComponent implements OnInit {
     switch (step) {
       case 1:
         if (!controls['municipalityName'].value?.trim()) {
-          errors.push('• Nazwa samorządu jest wymagana');
+          errors.push('Nazwa samorządu jest wymagana');
         }
         if (!controls['municipalityType'].value) {
-          errors.push('• Typ samorządu jest wymagany');
+          errors.push('Typ samorządu jest wymagany');
         }
         if (!controls['contactEmail'].value?.trim()) {
-          errors.push('• Email kontaktowy jest wymagany');
+          errors.push('Email kontaktowy jest wymagany');
         } else if (!this.isValidEmail(controls['contactEmail'].value)) {
-          errors.push('• Email ma nieprawidłowy format (np. kontakt@samorzad.pl)');
+          errors.push('Email ma nieprawidłowy format (np. kontakt@samorzad.pl)');
         }
         break;
       case 2:
         if (!controls['itemName'].value?.trim()) {
-          errors.push('• Nazwa przedmiotu jest wymagana');
+          errors.push('Nazwa przedmiotu jest wymagana');
         }
         if (!controls['itemCategory'].value) {
-          errors.push('• Kategoria przedmiotu jest wymagana');
+          errors.push('Kategoria przedmiotu jest wymagana');
         }
         if (!controls['itemDate'].value) {
-          errors.push('• Data znalezienia jest wymagana');
+          errors.push('Data znalezienia jest wymagana');
         }
         if (!controls['itemLocation'].value?.trim()) {
-          errors.push('• Miejsce znalezienia jest wymagane');
+          errors.push('Miejsce znalezienia jest wymagane');
         }
         if (!controls['itemStatus'].value) {
-          errors.push('• Status przedmiotu jest wymagany');
+          errors.push('Status przedmiotu jest wymagany');
         }
         break;
       case 3:
         if (!controls['storageDeadline'].value || controls['storageDeadline'].value < 1 || controls['storageDeadline'].value > 365) {
-          errors.push('• Termin przechowywania musi być między 1 a 365 dni');
+          errors.push('Termin przechowywania musi być między 1 a 365 dni');
         }
         if (!controls['pickupLocation'].value?.trim()) {
-          errors.push('• Miejsce odbioru jest wymagane');
+          errors.push('Miejsce odbioru jest wymagane');
         }
         break;
     }
