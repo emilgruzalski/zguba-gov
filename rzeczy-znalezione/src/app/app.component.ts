@@ -33,7 +33,7 @@ interface FoundItem {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   currentStep: number = 1;
@@ -168,30 +168,79 @@ export class AppComponent implements OnInit {
   }
 
   exportJSON(): void {
-    const dataStr = JSON.stringify(this.items, null, 2);
+    const currentItem: FoundItem = {
+      id: this.generateId(),
+      municipality: {
+        name: this.form.value.municipalityName,
+        type: this.form.value.municipalityType,
+        contactEmail: this.form.value.contactEmail
+      },
+      item: {
+        name: this.form.value.itemName,
+        category: this.form.value.itemCategory,
+        date: this.form.value.itemDate,
+        location: this.form.value.itemLocation,
+        status: this.form.value.itemStatus,
+        description: this.form.value.itemDescription
+      },
+      pickup: {
+        deadline: this.form.value.storageDeadline,
+        location: this.form.value.pickupLocation,
+        hours: this.form.value.pickupHours,
+        contact: this.form.value.contactPerson
+      },
+      categories: this.form.value.categories,
+      createdAt: new Date().toISOString()
+    };
+
+    const dataStr = JSON.stringify([currentItem], null, 2);
     this.downloadFile(dataStr, `rzeczy_znalezione_${Date.now()}.json`, 'application/json');
   }
 
   exportCSV(): void {
-    let csv = 'ID,Samorząd,Typ,Email,Przedmiot,Kategoria,Data,Lokalizacja,Status,Odbiór,Godziny,Data dodania\n';
+    let csv = 'ID,Samorząd,Typ,Email,Przedmiot,Kategoria,Data,Lokalizacja,Status,Odbiór,Godziny,Osoba Kontaktowa,Data Dodania\n';
     
-    this.items.forEach(item => {
-      const row = [
-        item.id,
-        item.municipality.name,
-        item.municipality.type,
-        item.municipality.contactEmail,
-        item.item.name,
-        item.item.category,
-        item.item.date,
-        item.item.location,
-        item.item.status,
-        item.pickup.location,
-        item.pickup.hours || '',
-        item.createdAt
-      ];
-      csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-    });
+    const currentItem: FoundItem = {
+      id: this.generateId(),
+      municipality: {
+        name: this.form.value.municipalityName,
+        type: this.form.value.municipalityType,
+        contactEmail: this.form.value.contactEmail
+      },
+      item: {
+        name: this.form.value.itemName,
+        category: this.form.value.itemCategory,
+        date: this.form.value.itemDate,
+        location: this.form.value.itemLocation,
+        status: this.form.value.itemStatus,
+        description: this.form.value.itemDescription
+      },
+      pickup: {
+        deadline: this.form.value.storageDeadline,
+        location: this.form.value.pickupLocation,
+        hours: this.form.value.pickupHours,
+        contact: this.form.value.contactPerson
+      },
+      categories: this.form.value.categories,
+      createdAt: new Date().toISOString()
+    };
+
+    const row = [
+      currentItem.id,
+      currentItem.municipality.name,
+      currentItem.municipality.type,
+      currentItem.municipality.contactEmail,
+      currentItem.item.name,
+      currentItem.item.category,
+      currentItem.item.date,
+      currentItem.item.location,
+      currentItem.item.status,
+      currentItem.pickup.location,
+      currentItem.pickup.hours || '',
+      currentItem.pickup.contact || '',
+      currentItem.createdAt
+    ];
+    csv += row.map(cell => `"${cell}"`).join(',') + '\n';
 
     this.downloadFile(csv, `rzeczy_znalezione_${Date.now()}.csv`, 'text/csv');
   }
@@ -228,13 +277,18 @@ export class AppComponent implements OnInit {
   }
 
   toggleCategory(value: string): void {
-    const categoriesArray = this.form.get('categories') as any;
-    const index = categoriesArray.value.indexOf(value);
-    
-    if (index === -1) {
-      categoriesArray.value.push(value);
-    } else {
-      categoriesArray.value.splice(index, 1);
+    const categoriesControl = this.form.get('categories');
+    if (categoriesControl) {
+      const currentValue = categoriesControl.value || [];
+      const index = currentValue.indexOf(value);
+      
+      if (index === -1) {
+        currentValue.push(value);
+      } else {
+        currentValue.splice(index, 1);
+      }
+      
+      categoriesControl.setValue([...currentValue]);
     }
   }
 
@@ -248,5 +302,32 @@ export class AppComponent implements OnInit {
 
   isStepActive(step: number): boolean {
     return step === this.currentStep;
+  }
+
+  getFormDataPreview(): string {
+    const preview = {
+      municipality: {
+        name: this.form.value.municipalityName || 'N/A',
+        type: this.form.value.municipalityType || 'N/A',
+        contactEmail: this.form.value.contactEmail || 'N/A'
+      },
+      item: {
+        name: this.form.value.itemName || 'N/A',
+        category: this.form.value.itemCategory || 'N/A',
+        date: this.form.value.itemDate || 'N/A',
+        location: this.form.value.itemLocation || 'N/A',
+        status: this.form.value.itemStatus || 'N/A',
+        description: this.form.value.itemDescription || ''
+      },
+      pickup: {
+        deadline: this.form.value.storageDeadline || 30,
+        location: this.form.value.pickupLocation || 'N/A',
+        hours: this.form.value.pickupHours || '',
+        contact: this.form.value.contactPerson || ''
+      },
+      categories: this.form.value.categories || [],
+      createdAt: new Date().toISOString()
+    };
+    return JSON.stringify(preview, null, 2);
   }
 }

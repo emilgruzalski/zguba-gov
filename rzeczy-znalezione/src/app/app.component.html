@@ -68,13 +68,15 @@
         <h2 class="step-title">Krok 2/5: Kategorie Rzeczy Znalezionych</h2>
         <p class="step-description">Wybierz główne kategorie rzeczy znalezionych</p>
         
-        <div id="categoryCheckboxes" formArrayName="categories">
-          <label *ngFor="let cat of categories; let i = index" style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; margin-bottom: 12px;">
+        <div id="categoryCheckboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 25px;">
+          <label *ngFor="let cat of categories" style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer; padding: 12px; background: #f9f9f9; border-radius: 6px; border: 2px solid #e0e0e0; transition: all 0.2s ease;">
             <input 
               type="checkbox" 
               [value]="cat.value" 
-              (change)="toggleCategory(cat.value)">
-            {{ cat.label }}
+              (change)="toggleCategory(cat.value)"
+              [checked]="form.get('categories')?.value?.includes(cat.value)"
+              style="width: 20px; height: 20px; cursor: pointer;">
+            <span style="font-weight: 500; color: #333;">{{ cat.label }}</span>
           </label>
         </div>
 
@@ -249,6 +251,11 @@
           <button type="button" class="btn-primary" (click)="exportCSV()">📊 Pobierz CSV</button>
         </div>
 
+        <div style="background: #f0f7ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 15px; margin-top: 20px; margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
+          <p style="font-size: 12px; font-weight: 600; color: #003399; margin-bottom: 10px;">Preview JSON:</p>
+          <pre style="font-size: 11px; color: #333; margin: 0; font-family: 'Courier New', monospace; white-space: pre-wrap; word-break: break-word;">{{ getFormDataPreview() }}</pre>
+        </div>
+
         <div class="buttons">
           <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
           <button type="button" class="btn-primary" (click)="submitData()">✓ Udostępnij w portalu</button>
@@ -257,12 +264,19 @@
     </form>
 
     <!-- Lista wgranych rekordów -->
-    <div *ngIf="items.length > 0" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid #eee;">
-      <h3>Dodane rekordy ({{ items.length }})</h3>
-      <div *ngFor="let item of items" style="background: #f9f9f9; padding: 12px; margin: 8px 0; border-radius: 4px; font-size: 12px;">
-        <strong>{{ item.item.name }}</strong> - {{ item.item.date }}
-        <br>
-        {{ item.municipality.name }} | {{ item.item.location }}
+    <div *ngIf="items.length > 0" class="records-section">
+      <h3>📋 Dodane rekordy ({{ items.length }})</h3>
+      <div *ngFor="let item of items" class="record-item">
+        <div>
+          <strong>{{ item.item.name }}</strong>
+          <span style="color: #999; font-size: 13px; margin-left: 8px;">{{ item.item.date }}</span>
+        </div>
+        <div style="font-size: 13px; color: #666; margin-top: 8px;">
+          🏛️ {{ item.municipality.name }} • 📍 {{ item.item.location }}
+        </div>
+        <div style="font-size: 12px; color: #999; margin-top: 6px;">
+          ID: {{ item.id }}
+        </div>
       </div>
     </div>
   </div>
