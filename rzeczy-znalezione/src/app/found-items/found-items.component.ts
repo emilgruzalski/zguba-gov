@@ -1,6 +1,7 @@
 // found-items.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TerritorialUnitsService, TerritorialUnit } from '../services/territorial-units.service';
 
 interface FoundItem {
   id: string;
@@ -39,6 +40,11 @@ export class FoundItemsComponent implements OnInit {
   form: FormGroup;
   items: FoundItem[] = [];
   
+  // Autouzupełnianie
+  filteredUnits: TerritorialUnit[] = [];
+  showAutocomplete: boolean = false;
+  selectedUnitType: TerritorialUnit['type'] | null = null;
+  
   categories = [
     { value: 'dokumenty', label: 'Dokumenty' },
     { value: 'telefony', label: 'Telefony i elektronika' },
@@ -61,12 +67,61 @@ export class FoundItemsComponent implements OnInit {
     { value: 'przekazana', label: 'Przekazana organizacji' }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private territorialUnitsService: TerritorialUnitsService
+  ) {
     this.form = this.initializeForm();
   }
 
   ngOnInit(): void {
     this.loadItems();
+    this.setupAutocomplete();
+  }
+
+  private setupAutocomplete(): void {
+    // Nasłuchuj zmian w polu typu samorządu
+    this.form.get('municipalityType')?.valueChanges.subscribe(type => {
+      this.selectedUnitType = type as TerritorialUnit['type'];
+      // Reset nazwy gdy zmienia się typ
+      if (this.form.get('municipalityName')?.value) {
+        this.onMunicipalityNameInput();
+      }
+    });
+  }
+
+  onMunicipalityNameInput(): void {
+    const query = this.form.get('municipalityName')?.value || '';
+    
+    if (query.length < 2) {
+      this.filteredUnits = [];
+      this.showAutocomplete = false;
+      return;
+    }
+
+    this.territorialUnitsService.search(
+      query,
+      this.selectedUnitType || undefined
+    ).then(results => {
+      this.filteredUnits = results;
+      this.showAutocomplete = results.length > 0;
+    });
+  }
+
+  selectUnit(unit: TerritorialUnit): void {
+    this.form.patchValue({
+      municipalityName: unit.name,
+      municipalityType: unit.type
+    });
+    this.showAutocomplete = false;
+    this.filteredUnits = [];
+  }
+
+  hideAutocomplete(): void {
+    // Opóźnienie aby kliknięcie w sugestię mogło się wykonać
+    setTimeout(() => {
+      this.showAutocomplete = false;
+    }, 200);
   }
 
   initializeForm(): FormGroup {
