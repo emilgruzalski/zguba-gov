@@ -1,0 +1,269 @@
+<!-- app.component.html -->
+<div class="container">
+  <header>
+    <h1>🔍 Portal Rzeczy Znalezionych</h1>
+    <p>dane.gov.pl - Szybkie udostępnianie danych</p>
+  </header>
+
+  <div class="content">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="getProgress()"></div>
+    </div>
+
+    <div class="step-indicator">
+      <div *ngFor="let i of [1,2,3,4,5]" 
+           class="step-dot"
+           [ngClass]="{'active': isStepActive(i), 'completed': isStepCompleted(i)}">
+        {{ i }}
+      </div>
+    </div>
+
+    <form [formGroup]="form">
+      <!-- KROK 1: Dane samorządu -->
+      <div class="wizard" *ngIf="currentStep === 1">
+        <h2 class="step-title">Krok 1/5: Dane Samorządu</h2>
+        <p class="step-description">Uzupełnij podstawowe informacje o samorządzie</p>
+        
+        <div class="form-group">
+          <label for="municipalityName">Nazwa samorządu *</label>
+          <input 
+            type="text" 
+            id="municipalityName" 
+            formControlName="municipalityName"
+            placeholder="np. Powiat Warszawski"
+            required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="municipalityType">Typ samorządu *</label>
+            <select 
+              id="municipalityType" 
+              formControlName="municipalityType"
+              required>
+              <option value="">Wybierz...</option>
+              <option *ngFor="let type of municipalityTypes" [value]="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contactEmail">Email kontaktowy *</label>
+            <input 
+              type="email" 
+              id="contactEmail" 
+              formControlName="contactEmail"
+              placeholder="kontakt@samorzad.pl"
+              required>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+        </div>
+      </div>
+
+      <!-- KROK 2: Kategorie -->
+      <div class="wizard" *ngIf="currentStep === 2">
+        <h2 class="step-title">Krok 2/5: Kategorie Rzeczy Znalezionych</h2>
+        <p class="step-description">Wybierz główne kategorie rzeczy znalezionych</p>
+        
+        <div id="categoryCheckboxes" formArrayName="categories">
+          <label *ngFor="let cat of categories; let i = index" style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer; margin-bottom: 12px;">
+            <input 
+              type="checkbox" 
+              [value]="cat.value" 
+              (change)="toggleCategory(cat.value)">
+            {{ cat.label }}
+          </label>
+        </div>
+
+        <div class="buttons">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+        </div>
+      </div>
+
+      <!-- KROK 3: Dane przedmiotu -->
+      <div class="wizard" *ngIf="currentStep === 3">
+        <h2 class="step-title">Krok 3/5: Dodaj Rzecz Znalezioną</h2>
+        <p class="step-description">Wpisz szczegóły znalezionego przedmiotu</p>
+        
+        <div class="form-group">
+          <label for="itemName">Nazwa przedmiotu *</label>
+          <input 
+            type="text" 
+            id="itemName" 
+            formControlName="itemName"
+            placeholder="np. Czarny portfel"
+            required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="itemCategory">Kategoria *</label>
+            <select 
+              id="itemCategory" 
+              formControlName="itemCategory"
+              required>
+              <option value="">Wybierz kategorię...</option>
+              <option *ngFor="let cat of categories" [value]="cat.value">
+                {{ cat.label }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemDate">Data znalezienia *</label>
+            <input 
+              type="date" 
+              id="itemDate" 
+              formControlName="itemDate"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="itemLocation">Miejsce znalezienia *</label>
+            <input 
+              type="text" 
+              id="itemLocation" 
+              formControlName="itemLocation"
+              placeholder="np. Przystanek autobusowy ul. Marszałkowska"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="itemStatus">Status *</label>
+            <select 
+              id="itemStatus" 
+              formControlName="itemStatus"
+              required>
+              <option value="">Wybierz status...</option>
+              <option *ngFor="let status of statusOptions" [value]="status.value">
+                {{ status.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="itemDescription">Opis szczegółowy</label>
+          <textarea 
+            id="itemDescription" 
+            formControlName="itemDescription"
+            placeholder="Dodatkowe szczegóły, znaki szczególne, itp."></textarea>
+        </div>
+
+        <div class="buttons">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+        </div>
+      </div>
+
+      <!-- KROK 4: Warunki odbioru -->
+      <div class="wizard" *ngIf="currentStep === 4">
+        <h2 class="step-title">Krok 4/5: Warunki Odbioru</h2>
+        <p class="step-description">Podaj informacje o warunkach przechowywania i odbioru</p>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="storageDeadline">Termin przechowywania (dni) *</label>
+            <input 
+              type="number" 
+              id="storageDeadline" 
+              formControlName="storageDeadline"
+              min="1" 
+              max="365" 
+              required>
+          </div>
+          <div class="form-group">
+            <label for="pickupLocation">Miejsce odbioru *</label>
+            <input 
+              type="text" 
+              id="pickupLocation" 
+              formControlName="pickupLocation"
+              placeholder="np. Biuro Stanu Cywilnego, ul. Marszałkowska 5"
+              required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pickupHours">Godziny dostępności</label>
+          <input 
+            type="text" 
+            id="pickupHours" 
+            formControlName="pickupHours"
+            placeholder="np. Pn-Pt 8:00-16:00">
+        </div>
+
+        <div class="form-group">
+          <label for="contactPerson">Osoba do kontaktu</label>
+          <input 
+            type="text" 
+            id="contactPerson" 
+            formControlName="contactPerson"
+            placeholder="Imię i nazwisko">
+        </div>
+
+        <div class="buttons">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+        </div>
+      </div>
+
+      <!-- KROK 5: Podsumowanie -->
+      <div class="wizard" *ngIf="currentStep === 5">
+        <h2 class="step-title">Krok 5/5: Podsumowanie i Udostępnienie</h2>
+        <p class="step-description">Przejrzyj dane i wybierz format eksportu</p>
+        
+        <div class="summary">
+          <div class="summary-item">
+            <span class="summary-label">Samorząd:</span>
+            <span class="summary-value">{{ form.get('municipalityName')?.value }} ({{ form.get('municipalityType')?.value }})</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Przedmiot:</span>
+            <span class="summary-value">{{ form.get('itemName')?.value }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Kategoria:</span>
+            <span class="summary-value">{{ form.get('itemCategory')?.value }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Data znalezienia:</span>
+            <span class="summary-value">{{ form.get('itemDate')?.value }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Miejsce znalezienia:</span>
+            <span class="summary-value">{{ form.get('itemLocation')?.value }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Odbiór:</span>
+            <span class="summary-value">{{ form.get('pickupLocation')?.value }}</span>
+          </div>
+        </div>
+
+        <p style="font-weight: 500; margin-bottom: 12px;">Wybierz format eksportu:</p>
+        <div class="export-buttons">
+          <button type="button" class="btn-primary" (click)="exportJSON()">📄 Pobierz JSON</button>
+          <button type="button" class="btn-primary" (click)="exportCSV()">📊 Pobierz CSV</button>
+        </div>
+
+        <div class="buttons">
+          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="submitData()">✓ Udostępnij w portalu</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Lista wgranych rekordów -->
+    <div *ngIf="items.length > 0" style="margin-top: 40px; padding-top: 40px; border-top: 1px solid #eee;">
+      <h3>Dodane rekordy ({{ items.length }})</h3>
+      <div *ngFor="let item of items" style="background: #f9f9f9; padding: 12px; margin: 8px 0; border-radius: 4px; font-size: 12px;">
+        <strong>{{ item.item.name }}</strong> - {{ item.item.date }}
+        <br>
+        {{ item.municipality.name }} | {{ item.item.location }}
+      </div>
+    </div>
+  </div>
+</div>
