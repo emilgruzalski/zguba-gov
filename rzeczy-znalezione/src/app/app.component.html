@@ -6,9 +6,12 @@
       <div class="error-modal-title">
         ⚠️ Błąd walidacji
       </div>
-      <ul class="error-modal-list">
-        <li *ngFor="let error of errorMessages">{{ error }}</li>
-      </ul>
+      <div class="error-modal-list">
+        <div class="error-item" *ngFor="let error of errorMessages">
+          <span class="error-icon">✕</span>
+          {{ error }}
+        </div>
+      </div>
       <button class="error-modal-button" (click)="closeErrorModal()">Zamknij</button>
     </div>
   </div>
@@ -34,7 +37,7 @@
     <form [formGroup]="form">
       <!-- KROK 1: Dane samorządu -->
       <div class="wizard" *ngIf="currentStep === 1">
-        <h2 class="step-title">Krok 1/5: Dane Samorządu</h2>
+        <h2 class="step-title">Krok 1/4: Dane Samorządu</h2>
         <p class="step-description">Uzupełnij podstawowe informacje o samorządzie</p>
         
         <div class="form-row">
@@ -292,7 +295,7 @@
           <span style="color: #999; font-size: 13px; margin-left: 8px;">{{ item.item.date }}</span>
         </div>
         <div style="font-size: 13px; color: #666; margin-top: 8px;">
-          🏛️ {{ item.municipality.name }} • 📍 {{ item.item.location }}
+          🏛️ {{ item.municipality.name }} 📍 {{ item.item.location }}
         </div>
         <div style="font-size: 12px; color: #999; margin-top: 6px;">
           ID: {{ item.id }}
