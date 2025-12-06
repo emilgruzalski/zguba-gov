@@ -407,7 +407,7 @@ button {
 
 .error-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   margin-bottom: 12px;
   padding-left: 0;
@@ -422,8 +422,7 @@ button {
   color: #eb2525;
   font-weight: bold;
   flex-shrink: 0;
-  margin-top: 2px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .error-modal-button {
