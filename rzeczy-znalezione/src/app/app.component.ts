@@ -101,7 +101,72 @@ export class AppComponent implements OnInit {
   nextStep(): void {
     if (this.validateStep(this.currentStep)) {
       this.currentStep++;
+    } else {
+      this.showValidationError();
     }
+  }
+
+  private showValidationError(): void {
+    const errors = this.getStepErrors(this.currentStep);
+    alert('❌ Błąd walidacji:\n\n' + errors.join('\n'));
+  }
+
+  private getStepErrors(step: number): string[] {
+    const errors: string[] = [];
+    const controls = this.form.controls;
+
+    switch (step) {
+      case 1:
+        if (!controls['municipalityName'].value?.trim()) {
+          errors.push('• Nazwa samorządu jest wymagana');
+        }
+        if (!controls['municipalityType'].value) {
+          errors.push('• Typ samorządu jest wymagany');
+        }
+        if (!controls['contactEmail'].value?.trim()) {
+          errors.push('• Email kontaktowy jest wymagany');
+        } else if (!this.isValidEmail(controls['contactEmail'].value)) {
+          errors.push('• Email ma nieprawidłowy format (np. kontakt@samorzad.pl)');
+        }
+        break;
+      case 2:
+        if (!controls['categories'].value || controls['categories'].value.length === 0) {
+          errors.push('• Wybierz co najmniej jedną kategorię');
+        }
+        break;
+      case 3:
+        if (!controls['itemName'].value?.trim()) {
+          errors.push('• Nazwa przedmiotu jest wymagana');
+        }
+        if (!controls['itemCategory'].value) {
+          errors.push('• Kategoria przedmiotu jest wymagana');
+        }
+        if (!controls['itemDate'].value) {
+          errors.push('• Data znalezienia jest wymagana');
+        }
+        if (!controls['itemLocation'].value?.trim()) {
+          errors.push('• Miejsce znalezienia jest wymagane');
+        }
+        if (!controls['itemStatus'].value) {
+          errors.push('• Status przedmiotu jest wymagany');
+        }
+        break;
+      case 4:
+        if (!controls['storageDeadline'].value || controls['storageDeadline'].value < 1 || controls['storageDeadline'].value > 365) {
+          errors.push('• Termin przechowywania musi być między 1 a 365 dni');
+        }
+        if (!controls['pickupLocation'].value?.trim()) {
+          errors.push('• Miejsce odbioru jest wymagane');
+        }
+        break;
+    }
+
+    return errors;
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   prevStep(): void {
@@ -117,9 +182,10 @@ export class AppComponent implements OnInit {
       case 1:
         return controls['municipalityName'].valid && 
                controls['municipalityType'].valid && 
-               controls['contactEmail'].valid;
+               controls['contactEmail'].valid &&
+               this.isValidEmail(controls['contactEmail'].value || '');
       case 2:
-        return controls['categories'].value.length > 0;
+        return controls['categories'].value && controls['categories'].value.length > 0;
       case 3:
         return controls['itemName'].valid && 
                controls['itemCategory'].valid && 
