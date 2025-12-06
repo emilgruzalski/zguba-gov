@@ -1,5 +1,18 @@
 <!-- app.component.html -->
 <div class="container">
+  <!-- Error Modal -->
+  <div class="error-modal" *ngIf="showErrorModal">
+    <div class="error-modal-content">
+      <div class="error-modal-title">
+        ⚠️ Błąd walidacji
+      </div>
+      <ul class="error-modal-list">
+        <li *ngFor="let error of errorMessages">{{ error }}</li>
+      </ul>
+      <button class="error-modal-button" (click)="closeErrorModal()">Zamknij</button>
+    </div>
+  </div>
+
   <header>
     <h1>🔍 Portal Rzeczy Znalezionych</h1>
     <p>dane.gov.pl - Szybkie udostępnianie danych</p>
@@ -11,7 +24,7 @@
     </div>
 
     <div class="step-indicator">
-      <div *ngFor="let i of [1,2,3,4,5]" 
+      <div *ngFor="let i of [1,2,3,4]" 
            class="step-dot"
            [ngClass]="{'active': isStepActive(i), 'completed': isStepCompleted(i)}">
         {{ i }}
@@ -90,32 +103,9 @@
         </div>
       </div>
 
-      <!-- KROK 2: Kategorie -->
+      <!-- KROK 2: Dane przedmiotu -->
       <div class="wizard" *ngIf="currentStep === 2">
-        <h2 class="step-title">Krok 2/5: Kategorie Rzeczy Znalezionych</h2>
-        <p class="step-description">Wybierz główne kategorie rzeczy znalezionych</p>
-        
-        <div id="categoryCheckboxes" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 25px;">
-          <label *ngFor="let cat of categories" style="display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer; padding: 12px; background: #f9f9f9; border-radius: 6px; border: 2px solid #e0e0e0; transition: all 0.2s ease;">
-            <input 
-              type="checkbox" 
-              [value]="cat.value" 
-              (change)="toggleCategory(cat.value)"
-              [checked]="form.get('categories')?.value?.includes(cat.value)"
-              style="width: 20px; height: 20px; cursor: pointer;">
-            <span style="font-weight: 500; color: #333;">{{ cat.label }}</span>
-          </label>
-        </div>
-
-        <div class="buttons">
-          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
-          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
-        </div>
-      </div>
-
-      <!-- KROK 3: Dane przedmiotu -->
-      <div class="wizard" *ngIf="currentStep === 3">
-        <h2 class="step-title">Krok 3/5: Dodaj Rzecz Znalezioną</h2>
+        <h2 class="step-title">Krok 2/4: Dodaj Rzecz Znalezioną</h2>
         <p class="step-description">Wpisz szczegóły znalezionego przedmiotu</p>
         
         <div class="form-group">
@@ -189,9 +179,9 @@
         </div>
       </div>
 
-      <!-- KROK 4: Warunki odbioru -->
-      <div class="wizard" *ngIf="currentStep === 4">
-        <h2 class="step-title">Krok 4/5: Warunki Odbioru</h2>
+      <!-- KROK 3: Warunki odbioru -->
+      <div class="wizard" *ngIf="currentStep === 3">
+        <h2 class="step-title">Krok 3/4: Warunki Odbioru</h2>
         <p class="step-description">Podaj informacje o warunkach przechowywania i odbioru</p>
         
         <div class="form-row">
@@ -240,9 +230,9 @@
         </div>
       </div>
 
-      <!-- KROK 5: Podsumowanie -->
-      <div class="wizard" *ngIf="currentStep === 5">
-        <h2 class="step-title">Krok 5/5: Podsumowanie i Udostępnienie</h2>
+      <!-- KROK 4: Podsumowanie -->
+      <div class="wizard" *ngIf="currentStep === 4">
+        <h2 class="step-title">Krok 4/4: Podsumowanie i Udostępnienie</h2>
         <p class="step-description">Przejrzyj dane i wybierz format eksportu</p>
         
         <div class="summary">
