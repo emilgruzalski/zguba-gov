@@ -48,6 +48,8 @@ export class TerritorialUnitsService {
     this.loading = true;
     
     try {
+      console.log('🔄 Rozpoczynam ładowanie danych z API GUS...');
+      
       // 1. Pobierz województwa (level=2)
       await this.loadWojewodztwa();
       
@@ -58,7 +60,11 @@ export class TerritorialUnitsService {
       await this.loadGminy();
       
       this.loaded = true;
-      console.log(`✅ Załadowano ${this.units.length} jednostek terytorialnych z API GUS`);
+      console.log(`✅ Załadowano łącznie ${this.units.length} jednostek terytorialnych z API GUS`);
+      console.log(`   - Województwa: ${this.units.filter(u => u.type === 'wojewodztwo').length}`);
+      console.log(`   - Powiaty: ${this.units.filter(u => u.type === 'powiat').length}`);
+      console.log(`   - Miasta: ${this.units.filter(u => u.type === 'miasto').length}`);
+      console.log(`   - Gminy: ${this.units.filter(u => u.type === 'gmina').length}`);
     } catch (error) {
       console.error('❌ Błąd podczas ładowania danych z API GUS:', error);
       // W razie błędu załaduj dane backup
@@ -122,37 +128,52 @@ export class TerritorialUnitsService {
   }
 
   private async loadGminy(): Promise<void> {
-    // Ładujemy tylko pierwszą stronę gmin (dla wydajności)
-    // W pełnej wersji można załadować wszystkie strony
-    const pageSize = 500;
-    const url = `${this.API_BASE}/units?level=6&format=json&page-size=${pageSize}&page=0`;
+    // Ładujemy gminy z wielu stron (API ma limit 100 na stronę)
+    const pageSize = 100; // Maksymalny limit API
+    const maxPages = 15; // ~1500 gmin (wystarczające dla autouzupełniania)
     
     try {
-      const response = await fetch(url);
-      const data: GusApiResponse = await response.json();
-      
-      data.results.forEach(unit => {
-        // Pomijamy część szczegółowych podziałów gmin
-        if (unit.kind === '4' || unit.kind === '5') {
-          return; // Pomiń miasta i obszary wiejskie w gminach miejsko-wiejskich
-        }
+      for (let page = 0; page < maxPages; page++) {
+        const url = `${this.API_BASE}/units?level=6&format=json&page-size=${pageSize}&page=${page}`;
+        const response = await fetch(url);
+        const data: GusApiResponse = await response.json();
         
-        const wojewodztwoNazwa = this.getWojewodztwoFromUnitId(unit.id);
-        
-        // Formatuj nazwę
-        let nazwa = unit.name;
-        if (!nazwa.toLowerCase().startsWith('gmina')) {
-          nazwa = `Gmina ${nazwa}`;
-        }
-        
-        this.units.push({
-          id: unit.id,
-          name: nazwa,
-          type: 'gmina',
-          parentName: wojewodztwoNazwa,
-          fullName: `${nazwa} (woj. ${wojewodztwoNazwa})`
+        data.results.forEach(unit => {
+          // Pomijamy tylko szczegółowe podpodziały gmin miejsko-wiejskich
+          // kind=1: gmina miejska, kind=2: gmina wiejska, kind=3: gmina miejsko-wiejska
+          // kind=4: część miejska gminy miejsko-wiejskiej, kind=5: część wiejska
+          if (unit.kind === '4' || unit.kind === '5') {
+            return; // Pomiń tylko części gmin miejsko-wiejskich
+          }
+          
+          const wojewodztwoNazwa = this.getWojewodztwoFromUnitId(unit.id);
+          
+          // Formatuj nazwę - w API są już jako "nazwa gminy" bez słowa "Gmina"
+          let nazwa = unit.name;
+          
+          // Dodaj prefix tylko jeśli jeszcze go nie ma
+          if (!nazwa.toLowerCase().includes('gmina') && 
+              !nazwa.toLowerCase().includes('miasto') &&
+              unit.kind !== '1') { // kind=1 to gminy miejskie, często bez prefiksu
+            nazwa = `Gmina ${nazwa}`;
+          }
+          
+          this.units.push({
+            id: unit.id,
+            name: nazwa,
+            type: 'gmina',
+            parentName: wojewodztwoNazwa,
+            fullName: `${nazwa} (woj. ${wojewodztwoNazwa})`
+          });
         });
-      });
+        
+        // Sprawdź czy są jeszcze strony
+        if (!data.links?.next) {
+          break;
+        }
+      }
+      
+      console.log(`✅ Załadowano ${this.units.filter(u => u.type === 'gmina').length} gmin`);
     } catch (error) {
       console.warn('Nie udało się załadować gmin:', error);
     }
