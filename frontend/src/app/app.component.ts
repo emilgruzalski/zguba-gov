@@ -477,4 +477,25 @@ export class AppComponent implements OnInit {
     };
     return JSON.stringify(preview, null, 2);
   }
+
+  // Metody dostępności WCAG 2.1
+  getStepName(step: number): string {
+    const names: { [key: number]: string } = {
+      1: 'samorządu',
+      2: 'przedmiotu',
+      3: 'odbioru',
+      4: 'podsumowania'
+    };
+    return names[step] || '';
+  }
+
+  getStepLabel(step: number): string {
+    const labels: { [key: number]: string } = {
+      1: 'Dane samorządu',
+      2: 'Dane przedmiotu',
+      3: 'Warunki odbioru',
+      4: 'Podsumowanie'
+    };
+    return labels[step] || '';
+  }
 }
