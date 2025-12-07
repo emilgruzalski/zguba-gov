@@ -511,6 +511,68 @@ button {
   box-shadow: 0 6px 16px rgba(15, 58, 125, 0.4);
 }
 
+/* Success Modal */
+.success-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.success-modal-content {
+  background: white;
+  border: 3px solid #0f3a7d;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(15, 58, 125, 0.3);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.success-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f3a7d;
+  margin-bottom: 18px;
+}
+
+.success-modal-message {
+  margin-bottom: 24px;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.success-modal-button {
+  background: #0f3a7d;
+  color: white;
+  border: none;
+  padding: 13px 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.success-modal-button:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 58, 125, 0.4);
+}
+
 /* Accessibility */
 input:focus-visible,
 select:focus-visible,
