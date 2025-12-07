@@ -13,6 +13,19 @@
     </div>
   </div>
 
+  <!-- Success Modal -->
+  <div class="success-modal" *ngIf="showSuccessModal" role="alertdialog" aria-labelledby="success-modal-title" aria-describedby="success-modal-desc">
+    <div class="success-modal-content">
+      <div class="success-modal-title" id="success-modal-title">
+        ✓ Sukces
+      </div>
+      <p class="success-modal-message" id="success-modal-desc" aria-live="polite" aria-atomic="true">
+        {{ successMessage }}
+      </p>
+      <button class="success-modal-button" (click)="closeSuccessModal()" aria-label="Zamknij modal sukcesu">Zamknij</button>
+    </div>
+  </div>
+
 <header>
     <img src="/polish_eagle.svg" alt="Polish national eagle emblem - white eagle with crown on red shield, symbol of Poland" width="80" height="80">
   <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
