@@ -42,6 +42,8 @@ export class AppComponent implements OnInit {
   totalSteps: number = 4;
   showErrorModal: boolean = false;
   errorMessages: string[] = [];
+  showSuccessModal: boolean = false;
+  successMessage: string = '';
   
   form: FormGroup;
   items: FoundItem[] = [];
@@ -179,6 +181,21 @@ export class AppComponent implements OnInit {
     this.errorMessages = [];
   }
 
+  showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    this.showSuccessModal = true;
+  }
+
+  showErrorMessage(message: string): void {
+    this.errorMessages = [message];
+    this.showErrorModal = true;
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.successMessage = '';
+  }
+
   private getStepErrors(step: number): string[] {
     const errors: string[] = [];
     const controls = this.form.controls;
@@ -290,13 +307,13 @@ export class AppComponent implements OnInit {
         // Prepend to list
         this.items.unshift(created as any);
         this.saveItems();
-        alert('✓ Dane zostały pomyślnie udostępnione!');
+        this.showSuccessMessage('Dane zostały pomyślnie udostępnione!');
         this.resetForm();
         this.currentStep = 1;
       },
       error: (err) => {
         console.error('Błąd przy zapisie na backendzie', err);
-        alert('Nie udało się zapisać danych na serwerze. Sprawdź konsolę.');
+        this.showErrorMessage('Nie udało się zapisać danych na serwerze. Sprawdź konsolę.');
       }
     });
   }
