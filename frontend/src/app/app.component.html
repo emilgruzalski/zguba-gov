@@ -1,15 +1,15 @@
 <!-- app.component.html -->
 <div class="container">
   <!-- Error Modal -->
-  <div class="error-modal" *ngIf="showErrorModal">
+  <div class="error-modal" *ngIf="showErrorModal" role="alertdialog" aria-labelledby="error-modal-title" aria-describedby="error-modal-desc">
     <div class="error-modal-content">
-      <div class="error-modal-title">
+      <div class="error-modal-title" id="error-modal-title">
         ⚠️ Błąd walidacji
       </div>
-      <ul class="error-modal-list">
+      <ul class="error-modal-list" id="error-modal-desc" aria-live="polite" aria-atomic="true">
         <li *ngFor="let error of errorMessages">{{ error }}</li>
       </ul>
-      <button class="error-modal-button" (click)="closeErrorModal()">Zamknij</button>
+      <button class="error-modal-button" (click)="closeErrorModal()" aria-label="Zamknij modal błędu walidacji">Zamknij</button>
     </div>
   </div>
 
@@ -28,9 +28,9 @@
           <div class="progress-fill" [style.width.%]="getProgress()"></div>
         </div>
         
-        <div class="progress-steps">
-          <div *ngFor="let i of [1,2,3,4]" class="progress-step" [ngClass]="{'active': isStepActive(i), 'completed': isStepCompleted(i)}">
-            <div class="step-circle">
+        <div class="progress-steps" role="tablist" aria-label="Kroki formularza">
+          <div *ngFor="let i of [1,2,3,4]" class="progress-step" [ngClass]="{'active': isStepActive(i), 'completed': isStepCompleted(i)}" role="tab" [attr.aria-selected]="isStepActive(i)" [attr.aria-current]="isStepActive(i) ? 'step' : false" [attr.aria-label]="'Krok ' + i + ' z 4: Dane ' + getStepName(i)">
+            <div class="step-circle" aria-hidden="true">
               <span *ngIf="isStepCompleted(i)" class="step-checkmark">✓</span>
               <span *ngIf="!isStepCompleted(i)">{{ i }}</span>
             </div>
@@ -45,29 +45,34 @@
       </div>
     </div>
 
-    <form [formGroup]="form">
+    <form [formGroup]="form" aria-label="Formularz zgłoszenia rzeczy znalezionej">
       <!-- KROK 1: Dane samorządu -->
-      <div class="wizard" *ngIf="currentStep === 1">
-        <h2 class="step-title">Krok 1/4: Dane Samorządu</h2>
+      <div class="wizard" *ngIf="currentStep === 1" role="region" aria-labelledby="step1-title">
+        <h2 class="step-title" id="step1-title">Krok 1/4: Dane Samorządu</h2>
         <p class="step-description">Uzupełnij podstawowe informacje o samorządzie</p>
         
         <div class="form-row">
           <div class="form-group">
-            <label for="municipalityType">Typ samorządu *</label>
+            <label for="municipalityType">Typ samorządu <span aria-label="wymagane">*</span></label>
             <select 
               id="municipalityType" 
               formControlName="municipalityType"
+              aria-required="true"
+              aria-describedby="municipalityType-help"
               required>
               <option value="">Wybierz...</option>
               <option *ngFor="let type of municipalityTypes" [value]="type.value">
                 {{ type.label }}
               </option>
             </select>
+            <small id="municipalityType-help" style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+              Wskaż typ samorządu: miasto, gmina, powiat lub województwo
+            </small>
           </div>
         </div>
 
         <div class="form-group" style="position: relative;">
-          <label for="municipalityName">Nazwa samorządu *</label>
+          <label for="municipalityName">Nazwa samorządu <span aria-label="wymagane">*</span></label>
           <input 
             type="text" 
             id="municipalityName" 
@@ -77,70 +82,88 @@
             (focus)="onMunicipalityNameInput()"
             (blur)="hideAutocomplete()"
             autocomplete="off"
+            aria-required="true"
+            aria-describedby="municipalityName-help"
+            [attr.aria-expanded]="showAutocomplete && filteredUnits.length > 0"
+            aria-autocomplete="list"
+            [attr.aria-controls]="showAutocomplete && filteredUnits.length > 0 ? 'autocomplete-list' : null"
             required>
           
           <!-- Lista autouzupełniania -->
           <div 
             *ngIf="showAutocomplete && filteredUnits.length > 0" 
-            class="autocomplete-list">
+            class="autocomplete-list"
+            id="autocomplete-list"
+            role="listbox"
+            aria-label="Sugestie samorządów">
             <div 
-              *ngFor="let unit of filteredUnits" 
+              *ngFor="let unit of filteredUnits; let idx = index" 
               class="autocomplete-item"
-              (click)="selectUnit(unit)">
+              [id]="'autocomplete-' + idx"
+              role="option"
+              [attr.aria-selected]="false"
+              (click)="selectUnit(unit)"
+              (keydown.enter)="selectUnit(unit)"
+              (keydown.space)="selectUnit(unit)"
+              tabindex="0">
               <strong>{{ unit.name }}</strong>
-              <span class="autocomplete-type">{{ unit.type }}</span>
-              <span class="autocomplete-context" *ngIf="unit.parentName">
+              <span class="autocomplete-type" aria-hidden="true">{{ unit.type }}</span>
+              <span class="autocomplete-context" *ngIf="unit.parentName" aria-hidden="true">
                 woj. {{ unit.parentName }}
               </span>
             </div>
           </div>
           
-          <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+          <small id="municipalityName-help" style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
             💡 Wybierz najpierw typ samorządu, następnie zacznij pisać nazwę aby zobaczyć podpowiedzi
           </small>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="contactEmail">Email kontaktowy *</label>
+            <label for="contactEmail">Email kontaktowy <span aria-label="wymagane">*</span></label>
             <input 
               type="email" 
               id="contactEmail" 
               formControlName="contactEmail"
               placeholder="kontakt@samorzad.pl"
+              aria-required="true"
+              aria-describedby="contactEmail-help"
               required>
-            <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
+            <small id="contactEmail-help" style="color: #666; font-size: 12px; margin-top: 4px; display: block;">
               ✨ Email uzupełni się automatycznie po wybraniu urzędu (możesz edytować)
             </small>
           </div>
         </div>
 
         <div class="buttons">
-          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+          <button type="button" class="btn-primary" (click)="nextStep()" aria-label="Przejdź do kroku drugiego - dane przedmiotu">Dalej →</button>
         </div>
       </div>
 
       <!-- KROK 2: Dane przedmiotu -->
-      <div class="wizard" *ngIf="currentStep === 2">
-        <h2 class="step-title">Krok 2/4: Dodaj Rzecz Znalezioną</h2>
+      <div class="wizard" *ngIf="currentStep === 2" role="region" aria-labelledby="step2-title">
+        <h2 class="step-title" id="step2-title">Krok 2/4: Dodaj Rzecz Znalezioną</h2>
         <p class="step-description">Wpisz szczegóły znalezionego przedmiotu</p>
         
         <div class="form-group">
-          <label for="itemName">Nazwa przedmiotu *</label>
+          <label for="itemName">Nazwa przedmiotu <span aria-label="wymagane">*</span></label>
           <input 
             type="text" 
             id="itemName" 
             formControlName="itemName"
             placeholder="np. Czarny portfel"
+            aria-required="true"
             required>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="itemCategory">Kategoria *</label>
+            <label for="itemCategory">Kategoria <span aria-label="wymagane">*</span></label>
             <select 
               id="itemCategory" 
               formControlName="itemCategory"
+              aria-required="true"
               required>
               <option value="">Wybierz kategorię...</option>
               <option *ngFor="let cat of categories" [value]="cat.value">
@@ -149,30 +172,33 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="itemDate">Data znalezienia *</label>
+            <label for="itemDate">Data znalezienia <span aria-label="wymagane">*</span></label>
             <input 
               type="date" 
               id="itemDate" 
               formControlName="itemDate"
+              aria-required="true"
               required>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="itemLocation">Miejsce znalezienia *</label>
+            <label for="itemLocation">Miejsce znalezienia <span aria-label="wymagane">*</span></label>
             <input 
               type="text" 
               id="itemLocation" 
               formControlName="itemLocation"
               placeholder="np. Przystanek autobusowy ul. Marszałkowska"
+              aria-required="true"
               required>
           </div>
           <div class="form-group">
-            <label for="itemStatus">Status *</label>
+            <label for="itemStatus">Status <span aria-label="wymagane">*</span></label>
             <select 
               id="itemStatus" 
               formControlName="itemStatus"
+              aria-required="true"
               required>
               <option value="">Wybierz status...</option>
               <option *ngFor="let status of statusOptions" [value]="status.value">
@@ -191,34 +217,36 @@
         </div>
 
         <div class="buttons">
-          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
-          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+          <button type="button" class="btn-secondary" (click)="prevStep()" aria-label="Wróć do poprzedniego kroku - dane samorządu">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="nextStep()" aria-label="Przejdź do kroku trzeciego - warunki odbioru">Dalej →</button>
         </div>
       </div>
 
       <!-- KROK 3: Warunki odbioru -->
-      <div class="wizard" *ngIf="currentStep === 3">
-        <h2 class="step-title">Krok 3/4: Warunki Odbioru</h2>
+      <div class="wizard" *ngIf="currentStep === 3" role="region" aria-labelledby="step3-title">
+        <h2 class="step-title" id="step3-title">Krok 3/4: Warunki Odbioru</h2>
         <p class="step-description">Podaj informacje o warunkach przechowywania i odbioru</p>
         
         <div class="form-row">
           <div class="form-group">
-            <label for="storageDeadline">Termin przechowywania (dni) *</label>
+            <label for="storageDeadline">Termin przechowywania (dni) <span aria-label="wymagane">*</span></label>
             <input 
               type="number" 
               id="storageDeadline" 
               formControlName="storageDeadline"
               min="1" 
               max="365" 
+              aria-required="true"
               required>
           </div>
           <div class="form-group">
-            <label for="pickupLocation">Miejsce odbioru *</label>
+            <label for="pickupLocation">Miejsce odbioru <span aria-label="wymagane">*</span></label>
             <input 
               type="text" 
               id="pickupLocation" 
               formControlName="pickupLocation"
               placeholder="np. Biuro Stanu Cywilnego, ul. Marszałkowska 5"
+              aria-required="true"
               required>
           </div>
         </div>
@@ -242,14 +270,14 @@
         </div>
 
         <div class="buttons">
-          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
-          <button type="button" class="btn-primary" (click)="nextStep()">Dalej →</button>
+          <button type="button" class="btn-secondary" (click)="prevStep()" aria-label="Wróć do poprzedniego kroku - dane przedmiotu">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="nextStep()" aria-label="Przejdź do kroku czwartego - podsumowanie">Dalej →</button>
         </div>
       </div>
 
       <!-- KROK 4: Podsumowanie -->
-      <div class="wizard" *ngIf="currentStep === 4">
-        <h2 class="step-title">Krok 4/4: Podsumowanie i Udostępnienie</h2>
+      <div class="wizard" *ngIf="currentStep === 4" role="region" aria-labelledby="step4-title">
+        <h2 class="step-title" id="step4-title">Krok 4/4: Podsumowanie i Udostępnienie</h2>
         <p class="step-description">Przejrzyj dane i wybierz format eksportu</p>
         
         <div class="summary">
@@ -281,8 +309,8 @@
 
         <p style="font-weight: 500; margin-bottom: 12px;">Wybierz format eksportu:</p>
         <div class="export-buttons">
-          <button type="button" class="btn-primary" (click)="exportJSON()">📄 Pobierz JSON</button>
-          <button type="button" class="btn-primary" (click)="exportCSV()">📊 Pobierz CSV</button>
+          <button type="button" class="btn-primary" (click)="exportJSON()" aria-label="Pobierz dane w formacie JSON">📄 Pobierz JSON</button>
+          <button type="button" class="btn-primary" (click)="exportCSV()" aria-label="Pobierz dane w formacie CSV">📊 Pobierz CSV</button>
         </div>
 
         <div style="background: #f0f7ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 15px; margin-top: 20px; margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
@@ -291,16 +319,16 @@
         </div>
 
         <div class="buttons">
-          <button type="button" class="btn-secondary" (click)="prevStep()">← Wstecz</button>
-          <button type="button" class="btn-primary" (click)="submitData()">✓ Udostępnij w portalu</button>
+          <button type="button" class="btn-secondary" (click)="prevStep()" aria-label="Wróć do poprzedniego kroku - warunki odbioru">← Wstecz</button>
+          <button type="button" class="btn-primary" (click)="submitData()" aria-label="Wyślij dane i udostępnij w portalu">✓ Udostępnij w portalu</button>
         </div>
       </div>
     </form>
 
     <!-- Lista wgranych rekordów -->
-    <div *ngIf="items.length > 0" class="records-section">
-      <h3>📋 Dodane rekordy ({{ items.length }})</h3>
-      <div *ngFor="let item of items" class="record-item">
+    <div *ngIf="items.length > 0" class="records-section" role="region" aria-labelledby="records-title">
+      <h3 id="records-title">📋 Dodane rekordy ({{ items.length }})</h3>
+      <div *ngFor="let item of items; let idx = index" class="record-item" role="article" [attr.aria-label]="'Rekord ' + (idx + 1) + ': ' + item.item.name + ' znalezione w ' + item.municipality.name">
         <div>
           <strong>{{ item.item.name }}</strong>
           <span style="color: #999; font-size: 13px; margin-left: 8px;">{{ item.item.date }}</span>
