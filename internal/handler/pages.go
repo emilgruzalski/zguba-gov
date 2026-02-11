@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/emilgruzalski/zguba-gov/internal/model"
-	"github.com/emilgruzalski/zguba-gov/internal/municipality"
-	"github.com/emilgruzalski/zguba-gov/internal/repository"
 	"github.com/gin-gonic/gin"
+	"github.com/kacperfilipiuk/zguba-gov/internal/model"
+	"github.com/kacperfilipiuk/zguba-gov/internal/municipality"
+	"github.com/kacperfilipiuk/zguba-gov/internal/repository"
 )
 
 type PagesHandler struct {

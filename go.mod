@@ -1,4 +1,4 @@
-module github.com/emilgruzalski/zguba-gov
+module github.com/kacperfilipiuk/zguba-gov
 
 go 1.24.0
 

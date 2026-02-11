@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/emilgruzalski/zguba-gov/internal/model"
-	"github.com/emilgruzalski/zguba-gov/internal/repository"
 	"github.com/gin-gonic/gin"
+	"github.com/kacperfilipiuk/zguba-gov/internal/model"
+	"github.com/kacperfilipiuk/zguba-gov/internal/repository"
 )
 
 type APIHandler struct {

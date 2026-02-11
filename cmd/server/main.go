@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	zgubagov "github.com/emilgruzalski/zguba-gov"
-	"github.com/emilgruzalski/zguba-gov/internal/config"
-	"github.com/emilgruzalski/zguba-gov/internal/database"
-	"github.com/emilgruzalski/zguba-gov/internal/handler"
-	"github.com/emilgruzalski/zguba-gov/internal/municipality"
-	"github.com/emilgruzalski/zguba-gov/internal/repository"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	zgubagov "github.com/kacperfilipiuk/zguba-gov"
+	"github.com/kacperfilipiuk/zguba-gov/internal/config"
+	"github.com/kacperfilipiuk/zguba-gov/internal/database"
+	"github.com/kacperfilipiuk/zguba-gov/internal/handler"
+	"github.com/kacperfilipiuk/zguba-gov/internal/municipality"
+	"github.com/kacperfilipiuk/zguba-gov/internal/repository"
 )
 
 func main() {

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/emilgruzalski/zguba-gov/internal/model"
 	"github.com/google/uuid"
+	"github.com/kacperfilipiuk/zguba-gov/internal/model"
 )
 
 type FoundItemRepo struct {
