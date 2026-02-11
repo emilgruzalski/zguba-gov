@@ -2,6 +2,8 @@
 
 A web application for reporting and searching found items in Polish public administration offices.
 
+Built in 2 days during the [HackNation](https://hacknation.pl/#about) hackathon.
+
 ## Project Structure
 
 ```

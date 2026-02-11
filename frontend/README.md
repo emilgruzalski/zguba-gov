@@ -73,3 +73,4 @@ src/
 - Export to JSON and CSV
 - Responsive design following GOV.PL guidelines
 - WCAG/ARIA accessibility attributes
+ 
