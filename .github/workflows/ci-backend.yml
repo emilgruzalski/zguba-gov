@@ -14,9 +14,10 @@ jobs:
     with:
       working-directory: backend
       image-name: ghcr.io/${{ github.repository }}-backend
-      dockerfile: ./Dockerfile
+      dockerfile: ./backend/Dockerfile
       context: ./backend
       push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+      python-version-file: ./backend/pyproject.toml
     permissions:
       contents: write
       packages: write

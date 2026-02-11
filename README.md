@@ -43,12 +43,10 @@ docker compose up --build
 
 ```bash
 cd backend
-uv venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-uv pip install -r requirements.txt
 cp .env.example .env
-python init_db.py
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uv sync
+uv run python init_db.py
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 - API: http://localhost:8000

@@ -5,17 +5,15 @@ FastAPI backend for the lost & found reporting application.
 ## Setup
 
 ```bash
-uv venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-uv pip install -r requirements.txt
 cp .env.example .env
-python init_db.py
+uv sync
+uv run python init_db.py
 ```
 
 ## Running
 
 ```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Or with Docker:
