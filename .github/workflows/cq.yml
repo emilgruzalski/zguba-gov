@@ -1,4 +1,4 @@
-name: CI
+name: Code Quality
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  cq:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
