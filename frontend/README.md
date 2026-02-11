@@ -5,13 +5,13 @@ Angular 19 frontend for the lost & found reporting application.
 ## Setup
 
 ```bash
-npm install
+bun install
 ```
 
 ## Development
 
 ```bash
-npm start
+bun start
 ```
 
 Open http://localhost:4200. The app reloads automatically on file changes.
@@ -21,13 +21,13 @@ The development server proxies API requests to `http://localhost:8000` (configur
 ## Build
 
 ```bash
-ng build
+bunx ng build
 ```
 
 Build artifacts are output to `dist/`. For production:
 
 ```bash
-ng build --configuration production
+bunx ng build --configuration production
 ```
 
 Or with Docker:
@@ -42,8 +42,8 @@ The Docker image uses nginx to serve the SPA and proxy `/api/`, `/odata/`, and `
 ## Testing
 
 ```bash
-npm test       # Unit tests (Karma)
-ng e2e         # End-to-end tests
+bun test       # Unit tests (Karma)
+bunx ng e2e    # End-to-end tests
 ```
 
 ## Project Structure

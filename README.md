@@ -16,11 +16,10 @@ zguba-gov/
 
 ### Backend
 - Python 3.9+
-- pip
+- [uv](https://docs.astral.sh/uv/)
 
 ### Frontend
-- Node.js 18+
-- npm
+- [Bun](https://bun.sh/)
 
 ## Getting Started
 
@@ -42,9 +41,9 @@ docker compose up --build
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+uv venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
 cp .env.example .env
 python init_db.py
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
@@ -57,8 +56,8 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 ```bash
 cd frontend
-npm install
-npm start
+bun install
+bun start
 ```
 
 - App: http://localhost:4200
@@ -142,7 +141,7 @@ npm start
 cd backend && pytest
 
 # Frontend
-cd frontend && npm test
+cd frontend && bun test
 ```
 
 ## License

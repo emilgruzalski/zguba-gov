@@ -5,9 +5,9 @@ FastAPI backend for the lost & found reporting application.
 ## Setup
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+uv venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+uv pip install -r requirements.txt
 cp .env.example .env
 python init_db.py
 ```
