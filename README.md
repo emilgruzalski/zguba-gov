@@ -8,141 +8,118 @@ Built in 2 days during the [HackNation](https://hacknation.pl/#about) hackathon.
 
 ```
 zguba-gov/
-├── backend/           # Backend API (Python FastAPI)
-├── frontend/          # Frontend (Angular 19)
-├── docker-compose.yml # Docker orchestration
-└── README.md
+├── cmd/server/         # Application entrypoint
+├── internal/
+│   ├── config/         # Environment configuration
+│   ├── database/       # SQLite database setup
+│   ├── handler/        # HTTP handlers (API, OData, metadata, pages)
+│   ├── model/          # Data models
+│   ├── municipality/   # Territorial unit service + data
+│   ├── odata/          # OData query parser
+│   └── repository/     # Database repository layer
+├── web/
+│   ├── static/         # CSS, images
+│   └── templates/      # Go HTML templates (HTMX)
+├── Dockerfile
+├── docker-compose.yml
+└── go.mod
 ```
 
 ## Requirements
 
-### Backend
-- Python 3.9+
-- [uv](https://docs.astral.sh/uv/)
-
-### Frontend
-- [Bun](https://bun.sh/)
+- Go 1.24+
 
 ## Getting Started
 
 ### Option 1: Docker (recommended)
 
-Run the entire stack with Docker Compose:
-
 ```bash
 docker compose up --build
 ```
 
-- Frontend: http://localhost
-- Backend API: http://localhost:8000
-- API docs: http://localhost:8000/docs
+Application: http://localhost:8000
 
 ### Option 2: Local Development
 
-#### Backend (FastAPI)
-
 ```bash
-cd backend
-cp .env.example .env
-uv sync
-uv run python init_db.py
-uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+go run ./cmd/server
 ```
 
-- API: http://localhost:8000
-- Swagger docs: http://localhost:8000/docs
+Application: http://localhost:8000
 
-#### Frontend (Angular)
+### Environment Variables
 
-```bash
-cd frontend
-bun install
-bun start
-```
+| Variable       | Default            | Description          |
+|----------------|--------------------|----------------------|
+| `PORT`         | `8000`             | Server port          |
+| `DATABASE_URL` | `zguba_gov.db`     | SQLite database path |
+| `CORS_ORIGINS` | `http://localhost:4200,http://localhost:3000` | Allowed CORS origins |
 
-- App: http://localhost:4200
+## Features
+
+- Multi-step wizard for registering found items (HTMX-powered)
+- Territorial unit autocomplete (voivodeships, counties, municipalities)
+- Items listing with filtering and search
+- JSON/CSV export
+- RESTful API with full CRUD
+- OData-compatible endpoint with `$filter`, `$orderby`, `$top`, `$skip`, `$count`
+- DCAT-AP metadata for dane.gov.pl integration
+- Responsive UI following GOV.PL design guidelines
+- Single binary with embedded static assets
 
 ## API Endpoints
 
 ### Found Items
-- `GET /api/found-items` - List found items (with filters)
-- `POST /api/found-items` - Create a new item
-- `GET /api/found-items/{id}` - Get item details
-- `PUT /api/found-items/{id}` - Update an item
-- `DELETE /api/found-items/{id}` - Delete an item
+- `GET /api/found-items` - List items (query: `skip`, `limit`, `category`, `municipality`, `status`, `search`)
+- `POST /api/found-items` - Create item
+- `GET /api/found-items/:id` - Get item
+- `PUT /api/found-items/:id` - Update item
+- `DELETE /api/found-items/:id` - Delete item
 - `GET /api/found-items/categories/list` - List categories
-
-### Statistics
-- `GET /api/stats` - System statistics
+- `GET /api/stats` - Statistics
 
 ### OData
-- `GET /odata/FoundItems` - OData-compatible endpoint
+- `GET /odata/FoundItems` - Query (`$filter`, `$orderby`, `$top`, `$skip`, `$count`)
+- `GET /odata/$metadata` - EDMX metadata
 
 ### Metadata (DCAT-AP)
-- `GET /metadata` - Dataset metadata in DCAT-AP format
-- `GET /metadata/schema` - JSON schema
-- `GET /metadata/dcat` - RDF metadata
-- `GET /metadata/distribution/{id}` - Distribution metadata
+- `GET /metadata` - Dataset catalog
+- `GET /metadata/distribution/:id` - Distribution info
 
 ### Health
-- `GET /health` - API health check
-
-**Note:** Territorial units are handled directly by the frontend (from a bundled JSON file).
-
-## Features
-
-### Backend
-- RESTful API with full CRUD
-- OData-compatible endpoint
-- DCAT-AP metadata for dane.gov.pl integration
-- Automatic API documentation (Swagger / ReDoc)
-- Async SQLAlchemy with SQLite
-
-### Frontend
-- Multi-step form for reporting found items
-- Territorial unit autocomplete (voivodeships, counties, municipalities)
-- Item filtering and search
-- JSON/CSV export
-- Responsive UI following GOV.PL design guidelines
+- `GET /health` - Health check
 
 ## Tech Stack
 
-### Backend
-- FastAPI
-- SQLAlchemy (async)
-- SQLite + aiosqlite
-- Pydantic
-
-### Frontend
-- Angular 19
-- TypeScript
-- RxJS
-- Angular Reactive Forms
+- **Go 1.24** + **Gin** (HTTP framework)
+- **SQLite** via `modernc.org/sqlite` (pure Go, no CGO)
+- **Go HTML templates** + **HTMX** (server-rendered UI)
+- **embed** (static assets bundled into binary)
 
 ## Development
 
-### Adding a new API feature
+### Adding a new API endpoint
 
-1. Create a model in `backend/models/`
-2. Add a Pydantic schema in `backend/schemas/`
-3. Create a router in `backend/routers/`
-4. Register the router in `backend/main.py`
+1. Define model structs in `internal/model/`
+2. Add repository methods in `internal/repository/`
+3. Create handler methods in `internal/handler/`
+4. Register routes in `cmd/server/main.go`
 
-### Adding a new frontend feature
+### Adding a new page/wizard step
 
-1. Generate a component: `ng generate component component-name`
-2. Add routing in `app.routes.ts`
-3. Generate a service: `ng generate service services/service-name`
+1. Create a template in `web/templates/partials/`
+2. Add handler logic in `internal/handler/pages.go`
+3. Register routes in `cmd/server/main.go`
 
 ## Testing
 
 ```bash
-# Backend
-cd backend && pytest
-
-# Frontend
-cd frontend && bun test
+go test ./...
 ```
+
+## CI
+
+GitHub Actions runs build, tests, and `go vet` on every push and PR to `main`.
 
 ## License
 

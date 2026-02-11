@@ -3,6 +3,7 @@ package municipality
 import (
 	"embed"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 	"unicode"
@@ -13,14 +14,33 @@ import (
 //go:embed territorial-units.json
 var dataFS embed.FS
 
+type FlexString string
+
+func (f *FlexString) UnmarshalJSON(data []byte) error {
+	if len(data) > 0 && data[0] == '"' {
+		var s string
+		if err := json.Unmarshal(data, &s); err != nil {
+			return err
+		}
+		*f = FlexString(s)
+		return nil
+	}
+	var n json.Number
+	if err := json.Unmarshal(data, &n); err != nil {
+		return err
+	}
+	*f = FlexString(fmt.Sprintf("%07s", n.String()))
+	return nil
+}
+
 type TerritorialUnit struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Type        string `json:"type"`
-	Email       string `json:"email,omitempty"`
-	OfficeName  string `json:"officeName,omitempty"`
-	Voivodeship string `json:"voivodeship,omitempty"`
-	County      string `json:"county,omitempty"`
+	ID          FlexString `json:"id"`
+	Name        string     `json:"name"`
+	Type        string     `json:"type"`
+	Email       string     `json:"email,omitempty"`
+	OfficeName  string     `json:"officeName,omitempty"`
+	Voivodeship string     `json:"voivodeship,omitempty"`
+	County      string     `json:"county,omitempty"`
 }
 
 type searchEntry struct {
