@@ -1,6 +1,8 @@
 """Metadata router for dane.gov.pl integration."""
-from fastapi import APIRouter
+
 from datetime import datetime
+
+from fastapi import APIRouter
 
 router = APIRouter(prefix="/metadata", tags=["metadata"])
 
@@ -17,7 +19,6 @@ async def get_dataset_metadata():
         "dct:modified": datetime.utcnow().isoformat() + "Z",
         "dct:language": "pl",
         "dcat:homepage": "https://zguba.gov",
-        
         "dcat:dataset": [
             {
                 "@type": "dcat:Dataset",
@@ -31,7 +32,6 @@ async def get_dataset_metadata():
                 "dcat:keyword": ["rzeczy znalezione", "przedmioty", "administracja publiczna", "dane otwarte"],
                 "dcat:theme": ["http://publications.europa.eu/resource/authority/data-theme/SOCI"],
                 "dct:accrualPeriodicity": "http://purl.org/ckan/freq/daily",
-                
                 "dcat:distribution": [
                     {
                         "@type": "dcat:Distribution",
@@ -41,7 +41,7 @@ async def get_dataset_metadata():
                         "dcat:downloadURL": "https://api.zguba.gov/api/found-items?limit=1000",
                         "dct:format": "JSON",
                         "dcat:mediaType": "application/json",
-                        "dct:license": "http://creativecommons.org/licenses/by/4.0/"
+                        "dct:license": "http://creativecommons.org/licenses/by/4.0/",
                     },
                     {
                         "@type": "dcat:Distribution",
@@ -49,33 +49,24 @@ async def get_dataset_metadata():
                         "dct:description": "OData endpoint dla zaawansowanego filtrowania",
                         "dcat:accessURL": "https://api.zguba.gov/odata",
                         "dct:format": "OData",
-                        "dcat:mediaType": "application/json"
-                    }
+                        "dcat:mediaType": "application/json",
+                    },
                 ],
-                
                 "dcat:contactPoint": {
                     "@type": "vcard:Organization",
                     "vcard:fn": "Zguba.gov Support",
-                    "vcard:hasEmail": "mailto:support@zguba.gov"
-                }
+                    "vcard:hasEmail": "mailto:support@zguba.gov",
+                },
             }
         ],
-        
-        "dcat:organization": {
-            "@type": "foaf:Organization",
-            "foaf:name": "Zguba.gov"
-        }
+        "dcat:organization": {"@type": "foaf:Organization", "foaf:name": "Zguba.gov"},
     }
 
 
 @router.get("/dcat", tags=["metadata"])
 async def get_dcat_rdf():
     """Return metadata in Turtle (RDF) format."""
-    return {
-        "message": "RDF endpoint - TODO",
-        "format": "text/turtle",
-        "uri": "https://api.zguba.gov/metadata/dcat.rdf"
-    }
+    return {"message": "RDF endpoint - TODO", "format": "text/turtle", "uri": "https://api.zguba.gov/metadata/dcat.rdf"}
 
 
 @router.get("/distribution/{distribution_id}", tags=["metadata"])
@@ -88,15 +79,15 @@ async def get_distribution_metadata(distribution_id: str):
             "dcat:accessURL": "https://api.zguba.gov/api/found-items",
             "dct:format": "JSON",
             "dcat:mediaType": "application/json",
-            "dct:license": "http://creativecommons.org/licenses/by/4.0/"
+            "dct:license": "http://creativecommons.org/licenses/by/4.0/",
         },
         "odata": {
             "@type": "dcat:Distribution",
             "dct:title": "OData API",
             "dcat:accessURL": "https://api.zguba.gov/odata",
             "dct:format": "OData",
-            "dcat:mediaType": "application/json"
-        }
+            "dcat:mediaType": "application/json",
+        },
     }
-    
+
     return distributions.get(distribution_id, {"error": "Distribution not found"})

@@ -1,7 +1,6 @@
 """Application configuration loaded from .env file."""
 
 from pydantic_settings import BaseSettings
-from typing import List
 
 
 class Settings(BaseSettings):
@@ -11,7 +10,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: str = "http://localhost:4200,http://localhost:3000"
 
     @property
-    def cors_origins_list(self) -> List[str]:
+    def cors_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
 
     class Config:

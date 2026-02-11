@@ -1,9 +1,10 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from config import settings
+
 from database import init_db
-from routers import found_items_router, stats_router, metadata_router, odata_router
+from routers import found_items_router, metadata_router, odata_router, stats_router
 
 
 @asynccontextmanager
@@ -17,7 +18,7 @@ app = FastAPI(
     title="Zguba.gov API",
     description="API dla systemu zgłaszania znalezionych rzeczy",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # CORS configuration - allow all localhost ports for development + dane.gov.pl
@@ -46,12 +47,7 @@ app.include_router(stats_router)
 
 @app.get("/")
 async def root():
-    return {
-        "message": "Zguba.gov API",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "status": "running"
-    }
+    return {"message": "Zguba.gov API", "version": "1.0.0", "docs": "/docs", "status": "running"}
 
 
 @app.get("/health")
@@ -61,4 +57,5 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

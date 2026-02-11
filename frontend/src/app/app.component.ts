@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TerritorialUnitsService, TerritorialUnit } from './services/territorial-units.service';
@@ -12,19 +12,23 @@ import { FoundItemsService, FoundItemCreate, FoundItemResponse } from './service
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  currentStep: number = 1;
-  totalSteps: number = 4;
-  showErrorModal: boolean = false;
+  private fb = inject(FormBuilder);
+  private territorialUnitsService = inject(TerritorialUnitsService);
+  private foundItemsService = inject(FoundItemsService);
+
+  currentStep = 1;
+  totalSteps = 4;
+  showErrorModal = false;
   errorMessages: string[] = [];
-  showSuccessModal: boolean = false;
-  successMessage: string = '';
+  showSuccessModal = false;
+  successMessage = '';
 
   form: FormGroup;
   items: FoundItemResponse[] = [];
   
   // Autouzupełnianie
   filteredUnits: TerritorialUnit[] = [];
-  showAutocomplete: boolean = false;
+  showAutocomplete = false;
   selectedUnitType: TerritorialUnit['type'] | null = null;
   
   categories = [
@@ -49,11 +53,7 @@ export class AppComponent implements OnInit {
     { value: 'przekazana', label: 'Przekazana organizacji' }
   ];
 
-  constructor(
-    private fb: FormBuilder,
-    private territorialUnitsService: TerritorialUnitsService,
-    private foundItemsService: FoundItemsService
-  ) {
+  constructor() {
     this.form = this.initializeForm();
   }
 
@@ -431,7 +431,7 @@ export class AppComponent implements OnInit {
 
   // Metody dostępności WCAG 2.1
   getStepName(step: number): string {
-    const names: { [key: number]: string } = {
+    const names: Record<number, string> = {
       1: 'samorządu',
       2: 'przedmiotu',
       3: 'odbioru',
@@ -441,7 +441,7 @@ export class AppComponent implements OnInit {
   }
 
   getStepLabel(step: number): string {
-    const labels: { [key: number]: string } = {
+    const labels: Record<number, string> = {
       1: 'Dane samorządu',
       2: 'Dane przedmiotu',
       3: 'Warunki odbioru',

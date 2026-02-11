@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -40,11 +40,11 @@ export interface FoundItemResponse extends FoundItemCreate {
 
 @Injectable({ providedIn: 'root' })
 export class FoundItemsService {
+  private http = inject(HttpClient);
+
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
-
-  list(skip = 0, limit = 50, params: any = {}): Observable<FoundItemResponse[]> {
+  list(skip = 0, limit = 50, params: Record<string, string> = {}): Observable<FoundItemResponse[]> {
     let url = `${this.apiUrl}/found-items?skip=${skip}&limit=${limit}`;
     Object.keys(params).forEach(key => {
       if (params[key] !== undefined && params[key] !== null) {
@@ -70,7 +70,7 @@ export class FoundItemsService {
     return this.http.delete<void>(`${this.apiUrl}/found-items/${encodeURIComponent(id)}`);
   }
 
-  categoriesList(): Observable<Array<{value:string;label:string}>> {
-    return this.http.get<Array<{value:string;label:string}>>(`${this.apiUrl}/found-items/categories/list`);
+  categoriesList(): Observable<{value:string;label:string}[]> {
+    return this.http.get<{value:string;label:string}[]>(`${this.apiUrl}/found-items/categories/list`);
   }
 }

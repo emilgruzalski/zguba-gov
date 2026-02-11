@@ -1,7 +1,9 @@
 """ORM model for found items."""
 
-from sqlalchemy import Column, String, Integer, DateTime, Text, JSON
 from datetime import datetime
+
+from sqlalchemy import JSON, Column, DateTime, Integer, String, Text
+
 from database import Base
 
 
@@ -46,7 +48,7 @@ class FoundItem(Base):
             "municipality": {
                 "name": self.municipality_name,
                 "type": self.municipality_type,
-                "contactEmail": self.municipality_email
+                "contactEmail": self.municipality_email,
             },
             "item": {
                 "name": self.item_name,
@@ -54,15 +56,15 @@ class FoundItem(Base):
                 "date": self.item_date,
                 "location": self.item_location,
                 "status": self.item_status,
-                "description": self.item_description
+                "description": self.item_description,
             },
             "pickup": {
                 "deadline": self.pickup_deadline,
                 "location": self.pickup_location,
                 "hours": self.pickup_hours,
-                "contact": self.pickup_contact
+                "contact": self.pickup_contact,
             },
             "categories": self.categories or [],
             "createdAt": self.created_at.isoformat() if self.created_at else None,
-            "updatedAt": self.updated_at.isoformat() if self.updated_at else None
+            "updatedAt": self.updated_at.isoformat() if self.updated_at else None,
         }

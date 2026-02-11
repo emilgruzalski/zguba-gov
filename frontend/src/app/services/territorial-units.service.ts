@@ -246,7 +246,7 @@ export class TerritorialUnitsService {
 
     const normalizedQuery = this.normalize(query);
 
-    let filtered = this.units.filter(unit => {
+    const filtered = this.units.filter(unit => {
       const matchesQuery = this.normalize(unit.fullName).includes(normalizedQuery) ||
                            this.normalize(unit.name).includes(normalizedQuery);
       const matchesType = !type || unit.type === type;
@@ -296,7 +296,7 @@ export class TerritorialUnitsService {
       return firstEmail;
     }
 
-    let nazwa = unit.name
+    const nazwa = unit.name
       .replace(/^Województwo\s+/i, '')
       .replace(/^Powiat\s+(m\.\s+)?/i, '')
       .replace(/^Gmina\s+/i, '')

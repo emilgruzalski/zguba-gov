@@ -2,16 +2,17 @@
 """
 Add example found items to database for testing
 """
+
 import asyncio
 import uuid
-from datetime import datetime
+
 from database import AsyncSessionLocal
 from models import FoundItem
 
 
 async def add_example_items():
     """Add example found items"""
-    
+
     example_items = [
         {
             "municipality_name": "Warszawa",
@@ -27,7 +28,7 @@ async def add_example_items():
             "pickup_location": "Urząd Miasta Warszawa, ul. Senatorska 30, pokój 215",
             "pickup_hours": "Poniedziałek-Piątek 9:00-17:00",
             "pickup_contact": "+48 22 443 44 44",
-            "categories": ["dokumenty", "portfele", "dowód osobisty"]
+            "categories": ["dokumenty", "portfele", "dowód osobisty"],
         },
         {
             "municipality_name": "Kraków",
@@ -43,7 +44,7 @@ async def add_example_items():
             "pickup_location": "Urząd Miasta Krakowa, ul. Wszystkich Świętych 3",
             "pickup_hours": "Poniedziałek-Piątek 8:00-16:00",
             "pickup_contact": "+48 12 616 15 00",
-            "categories": ["telefony", "elektronika"]
+            "categories": ["telefony", "elektronika"],
         },
         {
             "municipality_name": "Gdańsk",
@@ -59,7 +60,7 @@ async def add_example_items():
             "pickup_location": "Urząd Miasta Gdańska, ul. Nowe Ogrody 8/12",
             "pickup_hours": "Poniedziałek-Piątek 7:30-15:30",
             "pickup_contact": "+48 58 323 66 00",
-            "categories": ["bagaże", "plecaki"]
+            "categories": ["bagaże", "plecaki"],
         },
         {
             "municipality_name": "Wrocław",
@@ -75,7 +76,7 @@ async def add_example_items():
             "pickup_location": "Urząd Miejski Wrocławia, pl. Nowy Targ 1-8",
             "pickup_hours": "Poniedziałek 8:00-18:00, Wtorek-Piątek 7:30-15:30",
             "pickup_contact": "+48 71 777 77 77",
-            "categories": ["klucze", "pilot samochodowy"]
+            "categories": ["klucze", "pilot samochodowy"],
         },
         {
             "municipality_name": "Poznań",
@@ -91,25 +92,22 @@ async def add_example_items():
             "pickup_location": "Urząd Miasta Poznania, pl. Kolegiacki 17",
             "pickup_hours": "Poniedziałek-Piątek 8:00-16:00",
             "pickup_contact": "+48 61 878 40 00",
-            "categories": ["odzież", "akcesoria", "okulary"]
-        }
+            "categories": ["odzież", "akcesoria", "okulary"],
+        },
     ]
-    
+
     async with AsyncSessionLocal() as session:
         try:
             print("📥 Dodawanie przykładowych danych...")
-            
+
             for item_data in example_items:
-                item = FoundItem(
-                    id=str(uuid.uuid4()),
-                    **item_data
-                )
+                item = FoundItem(id=str(uuid.uuid4()), **item_data)
                 session.add(item)
                 print(f"   ✓ {item_data['item_name']} - {item_data['municipality_name']}")
-            
+
             await session.commit()
             print(f"\n✅ Dodano {len(example_items)} przykładowych przedmiotów!")
-            
+
         except Exception as e:
             print(f"❌ Błąd: {e}")
             await session.rollback()

@@ -1,14 +1,8 @@
 """DCAT-AP schemas for dane.gov.pl integration."""
 
 from pydantic import Field
-from typing import Optional, List
 
 from .found_item import (
-    MunicipalityInfo,
-    ItemInfo,
-    PickupInfo,
-    FoundItemCreate,
-    FoundItemUpdate,
     FoundItemResponse as BaseFoundItemResponse,
 )
 
@@ -20,15 +14,12 @@ class FoundItemResponse(BaseFoundItemResponse):
     type: str = Field(default="dcat:Dataset", alias="@type")
     dct_identifier: str = Field(alias="dct:identifier")
     dct_title: str = Field(alias="dct:title")
-    dct_description: Optional[str] = Field(default=None, alias="dct:description")
-    dct_issued: Optional[str] = Field(default=None, alias="dct:issued")
-    dct_modified: Optional[str] = Field(default=None, alias="dct:modified")
-    dct_license: str = Field(
-        default="http://creativecommons.org/licenses/by/4.0/",
-        alias="dct:license"
-    )
-    dcat_keyword: List[str] = Field(alias="dcat:keyword")
-    dcat_landingPage: Optional[str] = Field(default=None, alias="dcat:landingPage")
+    dct_description: str | None = Field(default=None, alias="dct:description")
+    dct_issued: str | None = Field(default=None, alias="dct:issued")
+    dct_modified: str | None = Field(default=None, alias="dct:modified")
+    dct_license: str = Field(default="http://creativecommons.org/licenses/by/4.0/", alias="dct:license")
+    dcat_keyword: list[str] = Field(alias="dcat:keyword")
+    dcat_landingPage: str | None = Field(default=None, alias="dcat:landingPage")
 
     class Config:
         from_attributes = True
@@ -43,18 +34,14 @@ class FoundItemResponse(BaseFoundItemResponse):
                 "dct:description": "Brazowy portfel ze skory naturalnej",
                 "dct:license": "http://creativecommons.org/licenses/by/4.0/",
                 "dcat:keyword": ["dokumenty", "portfele"],
-                "municipality": {
-                    "name": "Warszawa",
-                    "type": "miasto",
-                    "contactEmail": "kontakt@um.warszawa.pl"
-                },
+                "municipality": {"name": "Warszawa", "type": "miasto", "contactEmail": "kontakt@um.warszawa.pl"},
                 "item": {
                     "name": "Portfel skorzany brazowy",
                     "category": "dokumenty",
                     "date": "2025-12-01",
                     "location": "Park Lazienkowski",
                     "status": "available",
-                    "description": "Brazowy portfel ze skory"
-                }
+                    "description": "Brazowy portfel ze skory",
+                },
             }
         }
