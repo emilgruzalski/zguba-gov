@@ -1,0 +1,27 @@
+{{define "records.html"}}
+<div class="records-section">
+    <h2>Zarejestrowane przedmioty</h2>
+    {{if .Items}}
+    <div class="records-list">
+        {{range .Items}}
+        <div class="record-card">
+            <div class="record-header">
+                <span class="record-name">{{.Item.Name}}</span>
+                <span class="record-status status-{{.Item.Status}}">
+                    {{if eq .Item.Status "available"}}Oczekuje{{else if eq .Item.Status "claimed"}}Odebrana{{else if eq .Item.Status "expired"}}Przekazana{{else}}{{.Item.Status}}{{end}}
+                </span>
+            </div>
+            <div class="record-details">
+                <span class="record-category">{{.Item.Category}}</span>
+                <span class="record-location">{{.Item.Location}}</span>
+                <span class="record-date">{{.Item.Date}}</span>
+            </div>
+            <div class="record-municipality">{{.Municipality.Name}} ({{.Municipality.Type}})</div>
+        </div>
+        {{end}}
+    </div>
+    {{else}}
+    <p class="no-records">Brak zarejestrowanych przedmiotów.</p>
+    {{end}}
+</div>
+{{end}}

@@ -1,167 +1,159 @@
-# Zguba.gov - System zgłaszania znalezionych rzeczy
+# Zguba.gov
 
-Aplikacja webowa do zgłaszania i wyszukiwania znalezionych rzeczy w jednostkach administracji publicznej w Polsce.
+Lost and found item registration system for Polish public administration offices. Provides a multi-step wizard for municipal clerks to register found items, a public search interface, and a standards-compliant API for integration with [dane.gov.pl](https://dane.gov.pl).
 
-## Struktura projektu
+Built in 24 hours during the [HackNation](https://hacknation.pl/#about) hackathon.
+
+## Architecture
+
+The application is a single Go binary with embedded static assets. It serves both the HTML interface (rendered server-side with HTMX) and the REST/OData API. All data is stored in a local SQLite database.
 
 ```
-zguba-gov/
-├── backend/          # Backend API (Python FastAPI)
-├── frontend/         # Frontend (Angular)
-└── README.md
+                          Zguba.gov
+    ┌───────────────────────────────────────────────────┐
+    │                                                   │
+    │   ┌─────────────┐    ┌──────────────────────┐     │
+    │   │ Gin Router  │───>│ Page Handlers        │     │
+    │   │             │    │ (HTMX partials)      │     │
+    │   │ /           │    └──────────┬───────────┘     │
+    │   │ /steps/*    │               │                 │
+    │   │ /api/*      │    ┌──────────▼───────────┐     │
+    │   │ /odata/*    │───>│ API / OData Handlers │     │
+    │   │ /metadata   │    └──────────┬───────────┘     │
+    │   │ /health     │               │                 │
+    │   └─────────────┘    ┌──────────▼───────────┐     │
+    │                      │ Repository Layer     │     │
+    │   ┌─────────────┐    └──────────┬───────────┘     │
+    │   │ Embedded    │               │                 │
+    │   │ Templates   │    ┌──────────▼───────────┐     │
+    │   │ & Static    │    │ SQLite Database      │     │
+    │   │ Assets      │    │ (zguba_gov.db)       │     │
+    │   └─────────────┘    └─────────────────────-┘     │
+    │                                                   │
+    │   ┌─────────────────────────────────────────┐     │
+    │   │ Municipality Service                    │     │
+    │   │ (embedded territorial-units.json)       │     │
+    │   └─────────────────────────────────────────┘     │
+    │                                                   │
+    └───────────────────────────────────────────────────┘
 ```
 
-## Wymagania
+The request flow for the wizard UI:
 
-### Backend
-- Python 3.9+
-- pip
+1. **Browser loads the page** — Gin renders the full layout with the first wizard step.
+2. **User fills in a step** — HTMX sends a POST to `/steps/next` with all form data.
+3. **Server validates and responds** — returns the next step partial (or an error modal). Hidden form fields preserve state across steps.
+4. **Final submission** — the completed form is POSTed to `/api/found-items`. On success, a confirmation modal is shown and the items list refreshes.
 
-### Frontend
-- Node.js 18+
-- npm
+## Key features
 
-## Instalacja i uruchomienie
+- Multi-step wizard for registering found items with server-side validation
+- Territorial unit autocomplete covering all Polish voivodeships, counties, and municipalities
+- Items listing with filtering by category, municipality, status, and free-text search
+- JSON and CSV export of found items
+- RESTful API with full CRUD operations
+- OData-compatible endpoint with `$filter`, `$orderby`, `$top`, `$skip`, `$count`
+- DCAT-AP metadata endpoint for dane.gov.pl catalog integration
+- Responsive UI following GOV.PL design guidelines
+- Single binary with embedded static assets — no external file dependencies
+- Health check endpoint for container orchestration
 
-### Backend (FastAPI)
+## Getting started
 
-1. Przejdź do katalogu backend:
+### Prerequisites
+
+- Go 1.24+ — [download](https://go.dev/dl/)
+- Docker (optional)
+
+### Build
+
 ```bash
-cd backend
+go build -o zguba-gov ./cmd/server
 ```
 
-2. Utwórz wirtualne środowisko:
+### Run locally
+
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # Na Windows: venv\Scripts\activate
+go run ./cmd/server
 ```
 
-3. Zainstaluj zależności:
+The application starts on [http://localhost:8000](http://localhost:8000).
+
+### Run with Docker
+
 ```bash
-pip install -r requirements.txt
+docker compose up --build
 ```
 
-4. Skopiuj plik konfiguracyjny:
-```bash
-cp .env.example .env
-```
+> [!NOTE]
+> The SQLite database file is created automatically on first run. Data persists in the `zguba_gov.db` file in the working directory.
 
-5. Zainicjalizuj bazę danych:
-```bash
-python init_db.py
-```
+## Configuration
 
-6. Uruchom serwer:
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
+### Required environment variables
 
-Backend będzie dostępny pod adresem: http://localhost:8000
-Dokumentacja API: http://localhost:8000/docs
+No environment variables are required — the application runs with sensible defaults.
 
-### Frontend (Angular)
+### Optional environment variables
 
-1. Przejdź do katalogu frontend:
-```bash
-cd frontend
-```
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `8000` | HTTP server port |
+| `DATABASE_URL` | `zguba_gov.db` | SQLite database file path |
+| `CORS_ORIGINS` | `http://localhost:4200,http://localhost:3000` | Comma-separated list of allowed CORS origins |
 
-2. Zainstaluj zależności:
-```bash
-npm install
-```
+## API endpoints
 
-3. Uruchom serwer deweloperski:
-```bash
-npm start
-```
+### Found items
 
-Frontend będzie dostępny pod adresem: http://localhost:4200
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/found-items` | List items (query: `skip`, `limit`, `category`, `municipality`, `status`, `search`) |
+| `POST` | `/api/found-items` | Create item |
+| `GET` | `/api/found-items/:id` | Get item by ID |
+| `PUT` | `/api/found-items/:id` | Update item |
+| `DELETE` | `/api/found-items/:id` | Delete item |
+| `GET` | `/api/found-items/categories/list` | List available categories |
+| `GET` | `/api/stats` | Get statistics |
 
-## API Endpoints
+### OData
 
-### Znalezione rzeczy
-- `GET /api/found-items` - Lista znalezionych rzeczy (z filtrami)
-- `POST /api/found-items` - Dodaj nową rzecz
-- `GET /api/found-items/{id}` - Szczegóły rzeczy
-- `PUT /api/found-items/{id}` - Aktualizuj rzecz
-- `DELETE /api/found-items/{id}` - Usuń rzecz
-- `GET /api/found-items/categories/list` - Lista kategorii
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/odata/FoundItems` | Query items (`$filter`, `$orderby`, `$top`, `$skip`, `$count`) |
+| `GET` | `/odata/$metadata` | EDMX metadata document |
 
-### Statystyki
-- `GET /api/stats` - Ogólne statystyki systemu
+### Metadata (DCAT-AP)
 
-**Uwaga:** Jednostki terytorialne są obsługiwane bezpośrednio przez frontend (z pliku JSON).
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/metadata` | Dataset catalog |
+| `GET` | `/metadata/distribution/:id` | Distribution info |
 
-## Funkcjonalności
+### Health
 
-### Zaimplementowane
-- ✅ Przeglądanie jednostek terytorialnych
-- ✅ Wyszukiwanie jednostek po nazwie
-- ✅ Filtrowanie po województwach
-- ✅ Zarządzanie znalezionymi rzeczami (CRUD)
-- ✅ Filtrowanie znalezionych rzeczy
-- ✅ Statystyki systemu
-- ✅ API RESTful
-- ✅ Dokumentacja API (Swagger)
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/health` | Health check |
 
-### Frontend
-- ✅ Formularz zgłaszania znalezionych rzeczy
-- ✅ Autouzupełnianie jednostek terytorialnych
-- ✅ Wieloetapowy formularz
-- ✅ Walidacja danych
-- ✅ Responsywny interfejs
+## Troubleshooting
 
-## Technologie
+| Problem | Possible cause | Resolution |
+|---|---|---|
+| `cannot unmarshal number into Go struct field` | Inconsistent ID types in `territorial-units.json` | Fixed in codebase — `FlexString` type handles both string and numeric IDs |
+| Autocomplete shows no results | Query too short | Type at least 2 characters to trigger autocomplete |
+| Database locked errors | Multiple processes accessing the same `.db` file | Ensure only one instance is running per database file |
+| Port already in use | Another process on port 8000 | Set `PORT` environment variable to a different port |
+| Static assets not loading | Modified embedded files without rebuilding | Run `go build` again — assets are embedded at compile time |
 
-### Backend
-- FastAPI - framework webowy
-- SQLAlchemy - ORM
-- SQLite - baza danych (dev)
-- Pydantic - walidacja danych
-- Uvicorn - serwer ASGI
+## Security considerations
 
-### Frontend
-- Angular 18
-- TypeScript
-- RxJS
-- Angular Forms
-- HttpClient
+- The application does not implement authentication — it is designed for internal use within municipal offices
+- Input is validated server-side on every wizard step before database insertion
+- SQL queries use parameterized statements via GORM to prevent SQL injection
+- CORS origins are configurable and restricted by default
+- The Docker image uses a minimal base with no shell access
 
-## Rozwój
+## License
 
-### Dodanie nowej funkcjonalności do API
-
-1. Utwórz nowy model w `backend/models/`
-2. Dodaj schemat Pydantic w `backend/schemas/`
-3. Utwórz router w `backend/routers/`
-4. Dodaj router do `backend/main.py`
-
-### Dodanie nowej funkcjonalności do frontendu
-
-1. Utwórz nowy komponent: `ng generate component nazwa-komponentu`
-2. Dodaj routing w `app.routes.ts`
-3. Utwórz serwis: `ng generate service services/nazwa-serwisu`
-
-## Testowanie
-
-### Backend
-```bash
-cd backend
-source venv/bin/activate
-pytest
-```
-
-### Frontend
-```bash
-cd frontend
-npm test
-```
-
-## Licencja
-
-MIT
-
-## Autorzy
-
-Projekt Zguba.gov - System zgłaszania znalezionych rzeczy
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.

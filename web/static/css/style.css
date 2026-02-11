@@ -1,0 +1,733 @@
+/* ============================================
+   GOV.PL Design System - CSS
+   Portal Rzeczy Znalezionych
+   ============================================ */
+
+/* --- CSS Variables --- */
+:root {
+  --gov-blue: #0052B4;
+  --gov-blue-dark: #003d87;
+  --gov-blue-light: #4a90e2;
+  --gov-red: #DC143C;
+  --gov-green: #28a745;
+  --gov-orange: #e67e22;
+  --gov-gray-bg: #F5F5F5;
+  --gov-gray-light: #E8E8E8;
+  --gov-gray-dark: #666666;
+  --gov-text: #333333;
+  --gov-white: #FFFFFF;
+  --shadow-sm: 0 2px 4px rgba(0, 82, 180, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 82, 180, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 82, 180, 0.16);
+}
+
+/* --- Global Reset --- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- Body --- */
+body {
+  background-color: var(--gov-gray-bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--gov-text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* --- Container --- */
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  background: var(--gov-white);
+  box-shadow: var(--shadow-lg);
+  border-radius: 0;
+}
+
+/* --- Header --- */
+header {
+  background-color: var(--gov-blue);
+  color: var(--gov-white);
+  padding: 40px;
+  border-bottom: 4px solid var(--gov-blue-dark);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-eagle {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+header p {
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+/* --- Content --- */
+.content {
+  padding: 50px;
+}
+
+/* ============================================
+   Progress Section
+   ============================================ */
+.progress-section {
+  margin-bottom: 40px;
+}
+
+.progress-container {
+  position: relative;
+}
+
+.progress-line {
+  position: relative;
+  height: 3px;
+  background-color: var(--gov-gray-light);
+  margin: 18px 40px;
+  border-radius: 2px;
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--gov-blue), var(--gov-blue-light));
+  transition: width 0.4s ease;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  cursor: default;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--gov-gray-light);
+  background: var(--gov-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gov-gray-dark);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.step-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--gov-gray-dark);
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.progress-step.active .step-circle {
+  border-color: var(--gov-blue);
+  background: var(--gov-blue);
+  color: var(--gov-white);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(0, 82, 180, 0.2);
+}
+
+.progress-step.active .step-label {
+  color: var(--gov-blue);
+  font-weight: 600;
+}
+
+.progress-step.completed .step-circle {
+  border-color: var(--gov-blue);
+  background: var(--gov-blue);
+  color: var(--gov-white);
+}
+
+.progress-step.completed .step-label {
+  color: var(--gov-blue);
+}
+
+/* ============================================
+   Step Title
+   ============================================ */
+.step-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gov-text);
+  margin-bottom: 8px;
+}
+
+.step-description {
+  font-size: 14px;
+  color: var(--gov-gray-dark);
+  margin-bottom: 28px;
+}
+
+/* ============================================
+   Form Styles
+   ============================================ */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--gov-text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--gov-gray-light);
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--gov-text);
+  background: var(--gov-white);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--gov-blue);
+  box-shadow: 0 0 0 3px rgba(0, 82, 180, 0.15);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+button, .btn-outline {
+  padding: 13px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--gov-blue);
+  color: var(--gov-white);
+  border-color: var(--gov-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--gov-blue-dark);
+  border-color: var(--gov-blue-dark);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--gov-blue);
+  border: 2px solid var(--gov-blue);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(0, 82, 180, 0.06);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gov-blue);
+  border: 2px solid var(--gov-gray-light);
+}
+
+.btn-outline:hover {
+  border-color: var(--gov-blue);
+  background-color: rgba(0, 82, 180, 0.04);
+}
+
+/* ============================================
+   Summary Section (Step 4)
+   ============================================ */
+.summary-section {
+  background-color: var(--gov-gray-bg);
+  border-left: 4px solid var(--gov-blue);
+  padding: 20px 24px;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 24px;
+}
+
+.summary-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gov-blue);
+  margin-bottom: 12px;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 0;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gov-gray-light);
+  font-size: 14px;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  color: var(--gov-gray-dark);
+  font-weight: 500;
+}
+
+.summary-value {
+  color: var(--gov-text);
+  font-weight: 600;
+  text-align: right;
+  max-width: 60%;
+}
+
+/* ============================================
+   Export Section (Step 4)
+   ============================================ */
+.export-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--gov-gray-light);
+}
+
+.export-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gov-text);
+  margin-bottom: 12px;
+}
+
+.export-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ============================================
+   Records Section
+   ============================================ */
+.records-section {
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 2px solid var(--gov-gray-light);
+}
+
+.records-section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--gov-text);
+}
+
+.records-list {
+  display: grid;
+  gap: 12px;
+}
+
+.record-card {
+  background: linear-gradient(135deg, var(--gov-gray-bg), var(--gov-white));
+  border-left: 4px solid var(--gov-blue);
+  padding: 16px 20px;
+  border-radius: 0 4px 4px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.record-card:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.record-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gov-text);
+}
+
+.record-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-available {
+  background: rgba(40, 167, 69, 0.12);
+  color: var(--gov-green);
+}
+
+.status-claimed {
+  background: rgba(0, 82, 180, 0.12);
+  color: var(--gov-blue);
+}
+
+.status-expired {
+  background: rgba(230, 126, 34, 0.12);
+  color: var(--gov-orange);
+}
+
+.record-details {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--gov-gray-dark);
+  margin-bottom: 4px;
+}
+
+.record-municipality {
+  font-size: 12px;
+  color: var(--gov-gray-dark);
+}
+
+.no-records {
+  font-size: 14px;
+  color: var(--gov-gray-dark);
+  font-style: italic;
+  padding: 20px 0;
+}
+
+/* ============================================
+   Autocomplete
+   ============================================ */
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--gov-white);
+  border: 1px solid var(--gov-gray-light);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: var(--shadow-md);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 100;
+  list-style: none;
+}
+
+.autocomplete-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid var(--gov-gray-light);
+  transition: background-color 0.15s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover {
+  background-color: rgba(0, 82, 180, 0.06);
+}
+
+.ac-name {
+  font-weight: 500;
+}
+
+.ac-type {
+  display: inline-block;
+  background: var(--gov-blue);
+  color: var(--gov-white);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.autocomplete-empty {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--gov-gray-dark);
+  font-style: italic;
+  list-style: none;
+}
+
+/* ============================================
+   Modals
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modal {
+  background: var(--gov-white);
+  border-radius: 8px;
+  padding: 32px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--gov-gray-dark);
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--gov-text);
+}
+
+.error-modal {
+  border-top: 4px solid var(--gov-red);
+}
+
+.error-modal h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gov-red);
+  margin-bottom: 16px;
+}
+
+.success-modal {
+  border-top: 4px solid var(--gov-green);
+}
+
+.success-modal h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gov-green);
+  margin-bottom: 12px;
+}
+
+.success-modal p {
+  font-size: 14px;
+  color: var(--gov-gray-dark);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.error-list {
+  list-style: none;
+  margin-bottom: 24px;
+}
+
+.error-list li {
+  padding: 8px 0 8px 20px;
+  font-size: 14px;
+  color: var(--gov-text);
+  position: relative;
+}
+
+.error-list li::before {
+  content: "\2022";
+  color: var(--gov-red);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Accessibility - Focus Visible
+   ============================================ */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--gov-blue-light);
+  outline-offset: 2px;
+}
+
+.autocomplete-item:focus-visible {
+  outline: 2px solid var(--gov-blue);
+  outline-offset: -2px;
+  background-color: rgba(0, 82, 180, 0.06);
+}
+
+/* ============================================
+   Responsive - Mobile
+   ============================================ */
+@media (max-width: 768px) {
+  .container {
+    margin: 0;
+    box-shadow: none;
+  }
+
+  header {
+    padding: 24px 20px;
+  }
+
+  header h1 {
+    font-size: 24px;
+  }
+
+  .content {
+    padding: 24px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .buttons button,
+  .buttons .btn-outline {
+    width: 100%;
+  }
+
+  .export-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-line {
+    margin: 18px 20px;
+  }
+
+  .step-label {
+    font-size: 10px;
+  }
+
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .summary-item {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .summary-value {
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .record-details {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .record-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

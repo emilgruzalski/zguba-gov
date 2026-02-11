@@ -1,0 +1,66 @@
+{{define "step1.html"}}
+<div>
+    <input type="hidden" name="currentStep" value="1">
+    <h2 class="step-title">Dane Samorządu</h2>
+    <p class="step-description">Wprowadź dane jednostki samorządu terytorialnego, w której znaleziono przedmiot.</p>
+
+    <div class="form-group">
+        <label for="municipalityType">Typ samorządu</label>
+        <select name="municipalityType" id="municipalityType">
+            <option value="">-- Wybierz typ --</option>
+            <option value="powiat"{{if eq .MunicipalityType "powiat"}} selected{{end}}>Powiat</option>
+            <option value="gmina"{{if eq .MunicipalityType "gmina"}} selected{{end}}>Gmina</option>
+            <option value="miasto"{{if eq .MunicipalityType "miasto"}} selected{{end}}>Miasto</option>
+            <option value="wojewodztwo"{{if eq .MunicipalityType "wojewodztwo"}} selected{{end}}>Województwo</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="position: relative;">
+        <label for="municipalityName">Nazwa samorządu</label>
+        <input type="text" name="municipalityName" id="municipalityName" value="{{.MunicipalityName}}"
+               placeholder="Zacznij pisać nazwę..."
+               autocomplete="off">
+        <div id="autocomplete-results" class="autocomplete-list" style="display:none;"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="contactEmail">Email kontaktowy</label>
+        <input type="email" name="contactEmail" id="contactEmail" value="{{.ContactEmail}}" placeholder="kontakt@urzad.gov.pl">
+    </div>
+
+    <div class="buttons">
+        <button type="button" class="btn-primary"
+                hx-post="/steps/next"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            Dalej →
+        </button>
+    </div>
+</div>
+
+<script>
+(function() {
+    var nameInput = document.getElementById('municipalityName');
+    var typeSelect = document.getElementById('municipalityType');
+    var results = document.getElementById('autocomplete-results');
+
+    nameInput.addEventListener('input', function() {
+        var q = this.value;
+        var type = typeSelect ? typeSelect.value : '';
+        if (q.length < 2) {
+            results.style.display = 'none';
+            results.innerHTML = '';
+            return;
+        }
+        results.style.display = 'block';
+        htmx.ajax('GET', '/autocomplete?q=' + encodeURIComponent(q) + '&type=' + encodeURIComponent(type), {target: '#autocomplete-results', swap: 'innerHTML'});
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!results.contains(e.target) && e.target !== nameInput) {
+            results.style.display = 'none';
+        }
+    });
+})();
+</script>
+{{end}}

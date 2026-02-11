@@ -1,0 +1,11 @@
+{{define "autocomplete.html"}}
+{{range .Units}}
+<li class="autocomplete-item" onclick="selectUnit('{{.Name}}', '{{.Type}}', '{{.Email}}')">
+    <span class="ac-name">{{.Name}}</span>
+    <span class="ac-type">{{.Type}}</span>
+</li>
+{{end}}
+{{if not .Units}}
+<li class="autocomplete-empty">Brak wyników</li>
+{{end}}
+{{end}}

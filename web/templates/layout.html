@@ -1,0 +1,72 @@
+{{define "layout.html"}}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Rzeczy Znalezionych</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <img src="/static/img/polish_eagle.svg" alt="Godło RP" class="header-eagle">
+                <div>
+                    <h1>Portal Rzeczy Znalezionych</h1>
+                    <p>System rejestracji znalezionych przedmiot&oacute;w &ndash; dane.gov.pl</p>
+                </div>
+            </div>
+        </header>
+        <div class="content">
+            {{template "content" .}}
+        </div>
+    </div>
+
+    <script>
+    // Sync visible inputs to hidden fields before HTMX requests
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        var form = document.getElementById('wizard-form');
+        if (!form) return;
+        var inputs = form.querySelectorAll('#wizard-container input, #wizard-container select, #wizard-container textarea');
+        inputs.forEach(function(input) {
+            if (!input.name) return;
+            // Update parameters for THIS request
+            evt.detail.parameters[input.name] = input.value;
+            // Sync to form-level hidden fields for future step transitions
+            var hidden = form.querySelector(':scope > input[type=hidden][name="' + input.name + '"]');
+            if (hidden) hidden.value = input.value;
+        });
+    });
+
+    // Handle autocomplete selection
+    function selectUnit(name, type, email) {
+        var nameInput = document.querySelector('#wizard-container input[name="municipalityName"]');
+        if (nameInput) nameInput.value = name;
+        var hiddenName = document.querySelector('#wizard-form > input[type=hidden][name="municipalityName"]');
+        if (hiddenName) hiddenName.value = name;
+
+        var typeSelect = document.querySelector('#wizard-container select[name="municipalityType"]');
+        if (typeSelect) typeSelect.value = type;
+        var hiddenType = document.querySelector('#wizard-form > input[type=hidden][name="municipalityType"]');
+        if (hiddenType) hiddenType.value = type;
+
+        var emailInput = document.querySelector('#wizard-container input[name="contactEmail"]');
+        if (emailInput) emailInput.value = email;
+        var hiddenEmail = document.querySelector('#wizard-form > input[type=hidden][name="contactEmail"]');
+        if (hiddenEmail) hiddenEmail.value = email;
+
+        var results = document.getElementById('autocomplete-results');
+        if (results) results.innerHTML = '';
+    }
+
+    // Close modals
+    function closeModal() {
+        var modals = document.getElementById('modals');
+        if (modals) modals.innerHTML = '';
+    }
+    </script>
+</body>
+</html>
+{{end}}

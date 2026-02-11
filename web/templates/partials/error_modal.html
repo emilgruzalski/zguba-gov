@@ -1,0 +1,14 @@
+{{define "error_modal.html"}}
+<div class="modal-overlay" onclick="closeModal()">
+    <div class="modal error-modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h3>Błędy walidacji</h3>
+        <ul class="error-list">
+            {{range .Errors}}
+            <li>{{.}}</li>
+            {{end}}
+        </ul>
+        <button class="btn-primary" onclick="closeModal()">Popraw dane</button>
+    </div>
+</div>
+{{end}}

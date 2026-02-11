@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=/app/data/zguba.db
+    volumes:
+      - app-data:/app/data
+
+volumes:
+  app-data:

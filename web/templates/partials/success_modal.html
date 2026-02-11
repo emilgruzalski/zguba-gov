@@ -1,0 +1,10 @@
+{{define "success_modal.html"}}
+<div class="modal-overlay" onclick="closeModal()">
+    <div class="modal success-modal" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h3>Sukces</h3>
+        <p>{{.Success}}</p>
+        <button class="btn-primary" onclick="closeModal()">OK</button>
+    </div>
+</div>
+{{end}}

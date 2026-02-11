@@ -1,0 +1,44 @@
+{{define "step3.html"}}
+<div>
+    <input type="hidden" name="currentStep" value="3">
+    <h2 class="step-title">Warunki Odbioru</h2>
+    <p class="step-description">Określ warunki przechowywania i odbioru przedmiotu.</p>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="storageDeadline">Termin przechowania (dni)</label>
+            <input type="number" name="storageDeadline" id="storageDeadline" value="{{.StorageDeadline}}" min="1" max="365">
+        </div>
+        <div class="form-group">
+            <label for="pickupLocation">Miejsce odbioru</label>
+            <input type="text" name="pickupLocation" id="pickupLocation" value="{{.PickupLocation}}" placeholder="np. Biuro Rzeczy Znalezionych, pok. 12">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="pickupHours">Godziny odbioru (opcjonalnie)</label>
+            <input type="text" name="pickupHours" id="pickupHours" value="{{.PickupHours}}" placeholder="np. pon-pt 8:00-16:00">
+        </div>
+        <div class="form-group">
+            <label for="contactPerson">Osoba kontaktowa (opcjonalnie)</label>
+            <input type="text" name="contactPerson" id="contactPerson" value="{{.ContactPerson}}" placeholder="np. Jan Kowalski">
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="button" class="btn-secondary"
+                hx-post="/steps/prev"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            ← Wstecz
+        </button>
+        <button type="button" class="btn-primary"
+                hx-post="/steps/next"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            Dalej →
+        </button>
+    </div>
+</div>
+{{end}}
