@@ -1,17 +1,18 @@
-# Zguba.gov - System zgłaszania znalezionych rzeczy
+# Zguba.gov - Lost & Found Reporting System
 
-Aplikacja webowa do zgłaszania i wyszukiwania znalezionych rzeczy w jednostkach administracji publicznej w Polsce.
+A web application for reporting and searching found items in Polish public administration offices.
 
-## Struktura projektu
+## Project Structure
 
 ```
 zguba-gov/
-├── backend/          # Backend API (Python FastAPI)
-├── frontend/         # Frontend (Angular)
+├── backend/           # Backend API (Python FastAPI)
+├── frontend/          # Frontend (Angular 19)
+├── docker-compose.yml # Docker orchestration
 └── README.md
 ```
 
-## Wymagania
+## Requirements
 
 ### Backend
 - Python 3.9+
@@ -21,147 +22,129 @@ zguba-gov/
 - Node.js 18+
 - npm
 
-## Instalacja i uruchomienie
+## Getting Started
 
-### Backend (FastAPI)
+### Option 1: Docker (recommended)
 
-1. Przejdź do katalogu backend:
+Run the entire stack with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: http://localhost
+- Backend API: http://localhost:8000
+- API docs: http://localhost:8000/docs
+
+### Option 2: Local Development
+
+#### Backend (FastAPI)
+
 ```bash
 cd backend
-```
-
-2. Utwórz wirtualne środowisko:
-```bash
 python3 -m venv venv
-source venv/bin/activate  # Na Windows: venv\Scripts\activate
-```
-
-3. Zainstaluj zależności:
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-4. Skopiuj plik konfiguracyjny:
-```bash
 cp .env.example .env
-```
-
-5. Zainicjalizuj bazę danych:
-```bash
 python init_db.py
-```
-
-6. Uruchom serwer:
-```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Backend będzie dostępny pod adresem: http://localhost:8000
-Dokumentacja API: http://localhost:8000/docs
+- API: http://localhost:8000
+- Swagger docs: http://localhost:8000/docs
 
-### Frontend (Angular)
+#### Frontend (Angular)
 
-1. Przejdź do katalogu frontend:
 ```bash
 cd frontend
-```
-
-2. Zainstaluj zależności:
-```bash
 npm install
-```
-
-3. Uruchom serwer deweloperski:
-```bash
 npm start
 ```
 
-Frontend będzie dostępny pod adresem: http://localhost:4200
+- App: http://localhost:4200
 
 ## API Endpoints
 
-### Znalezione rzeczy
-- `GET /api/found-items` - Lista znalezionych rzeczy (z filtrami)
-- `POST /api/found-items` - Dodaj nową rzecz
-- `GET /api/found-items/{id}` - Szczegóły rzeczy
-- `PUT /api/found-items/{id}` - Aktualizuj rzecz
-- `DELETE /api/found-items/{id}` - Usuń rzecz
-- `GET /api/found-items/categories/list` - Lista kategorii
+### Found Items
+- `GET /api/found-items` - List found items (with filters)
+- `POST /api/found-items` - Create a new item
+- `GET /api/found-items/{id}` - Get item details
+- `PUT /api/found-items/{id}` - Update an item
+- `DELETE /api/found-items/{id}` - Delete an item
+- `GET /api/found-items/categories/list` - List categories
 
-### Statystyki
-- `GET /api/stats` - Ogólne statystyki systemu
+### Statistics
+- `GET /api/stats` - System statistics
 
-**Uwaga:** Jednostki terytorialne są obsługiwane bezpośrednio przez frontend (z pliku JSON).
+### OData
+- `GET /odata/FoundItems` - OData-compatible endpoint
 
-## Funkcjonalności
+### Metadata (DCAT-AP)
+- `GET /metadata` - Dataset metadata in DCAT-AP format
+- `GET /metadata/schema` - JSON schema
+- `GET /metadata/dcat` - RDF metadata
+- `GET /metadata/distribution/{id}` - Distribution metadata
 
-### Zaimplementowane
-- ✅ Przeglądanie jednostek terytorialnych
-- ✅ Wyszukiwanie jednostek po nazwie
-- ✅ Filtrowanie po województwach
-- ✅ Zarządzanie znalezionymi rzeczami (CRUD)
-- ✅ Filtrowanie znalezionych rzeczy
-- ✅ Statystyki systemu
-- ✅ API RESTful
-- ✅ Dokumentacja API (Swagger)
+### Health
+- `GET /health` - API health check
 
-### Frontend
-- ✅ Formularz zgłaszania znalezionych rzeczy
-- ✅ Autouzupełnianie jednostek terytorialnych
-- ✅ Wieloetapowy formularz
-- ✅ Walidacja danych
-- ✅ Responsywny interfejs
+**Note:** Territorial units are handled directly by the frontend (from a bundled JSON file).
 
-## Technologie
+## Features
 
 ### Backend
-- FastAPI - framework webowy
-- SQLAlchemy - ORM
-- SQLite - baza danych (dev)
-- Pydantic - walidacja danych
-- Uvicorn - serwer ASGI
+- RESTful API with full CRUD
+- OData-compatible endpoint
+- DCAT-AP metadata for dane.gov.pl integration
+- Automatic API documentation (Swagger / ReDoc)
+- Async SQLAlchemy with SQLite
 
 ### Frontend
-- Angular 18
+- Multi-step form for reporting found items
+- Territorial unit autocomplete (voivodeships, counties, municipalities)
+- Item filtering and search
+- JSON/CSV export
+- Responsive UI following GOV.PL design guidelines
+
+## Tech Stack
+
+### Backend
+- FastAPI
+- SQLAlchemy (async)
+- SQLite + aiosqlite
+- Pydantic
+
+### Frontend
+- Angular 19
 - TypeScript
 - RxJS
-- Angular Forms
-- HttpClient
+- Angular Reactive Forms
 
-## Rozwój
+## Development
 
-### Dodanie nowej funkcjonalności do API
+### Adding a new API feature
 
-1. Utwórz nowy model w `backend/models/`
-2. Dodaj schemat Pydantic w `backend/schemas/`
-3. Utwórz router w `backend/routers/`
-4. Dodaj router do `backend/main.py`
+1. Create a model in `backend/models/`
+2. Add a Pydantic schema in `backend/schemas/`
+3. Create a router in `backend/routers/`
+4. Register the router in `backend/main.py`
 
-### Dodanie nowej funkcjonalności do frontendu
+### Adding a new frontend feature
 
-1. Utwórz nowy komponent: `ng generate component nazwa-komponentu`
-2. Dodaj routing w `app.routes.ts`
-3. Utwórz serwis: `ng generate service services/nazwa-serwisu`
+1. Generate a component: `ng generate component component-name`
+2. Add routing in `app.routes.ts`
+3. Generate a service: `ng generate service services/service-name`
 
-## Testowanie
+## Testing
 
-### Backend
 ```bash
-cd backend
-source venv/bin/activate
-pytest
+# Backend
+cd backend && pytest
+
+# Frontend
+cd frontend && npm test
 ```
 
-### Frontend
-```bash
-cd frontend
-npm test
-```
-
-## Licencja
+## License
 
 MIT
-
-## Autorzy
-
-Projekt Zguba.gov - System zgłaszania znalezionych rzeczy

@@ -1,79 +1,80 @@
 # Backend API - Zguba.gov
 
-Backend API w FastAPI dla aplikacji do zgłaszania znalezionych rzeczy.
+FastAPI backend for the lost & found reporting application.
 
-## Instalacja
+## Setup
 
-1. Utwórz wirtualne środowisko:
 ```bash
 python -m venv venv
-source venv/bin/activate  # Na Windows: venv\Scripts\activate
-```
-
-2. Zainstaluj zależności:
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-3. Skopiuj plik konfiguracyjny:
-```bash
 cp .env.example .env
-```
-
-4. Zainicjalizuj bazę danych:
-```bash
 python init_db.py
 ```
 
-## Uruchomienie
+## Running
 
-```bash
-bash start.sh
-```
-
-Alternatywnie:
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API będzie dostępne pod adresem: http://localhost:8000
-Dokumentacja API: http://localhost:8000/docs
+Or with Docker:
 
-## Struktura projektu
+```bash
+docker build -t zguba-backend .
+docker run -p 8000:8000 zguba-backend
+```
+
+- API: http://localhost:8000
+- Swagger docs: http://localhost:8000/docs
+
+## Project Structure
 
 ```
 backend/
-├── main.py                 # Główny plik aplikacji
-├── config.py              # Konfiguracja
-├── database.py            # Konfiguracja bazy danych
-├── init_db.py             # Inicjalizacja bazy danych
-├── start.sh               # Skrypt startowy
-├── models/                # Modele SQLAlchemy
-│   └── found_item.py
-├── schemas/               # Modele Pydantic
-│   └── found_item.py
-└── routers/               # Endpointy API
-    ├── found_items.py
-    └── stats.py
+├── main.py              # Application entry point
+├── config.py            # Settings (from .env)
+├── database.py          # Database engine and session
+├── init_db.py           # Database initialization
+├── add_examples.py      # Seed example data
+├── Dockerfile
+├── models/
+│   └── found_item.py    # SQLAlchemy ORM model
+├── schemas/
+│   ├── found_item.py    # Pydantic request/response schemas
+│   └── found_item_dcat.py  # DCAT-AP schemas for dane.gov.pl
+└── routers/
+    ├── found_items.py   # CRUD endpoints
+    ├── stats.py         # Statistics endpoint
+    ├── odata.py         # OData-compatible endpoint
+    └── metadata.py      # DCAT-AP metadata endpoint
 ```
 
 ## API Endpoints
 
-### Znalezione rzeczy
-- `GET /api/found-items` - Lista znalezionych rzeczy
-- `POST /api/found-items` - Dodaj nową rzecz
-- `GET /api/found-items/{id}` - Szczegóły rzeczy
-- `PUT /api/found-items/{id}` - Aktualizuj rzecz
-- `DELETE /api/found-items/{id}` - Usuń rzecz
-- `GET /api/found-items/categories/list` - Lista kategorii
+### Found Items
+- `GET /api/found-items` - List items (supports `category`, `municipality`, `status`, `search` filters)
+- `POST /api/found-items` - Create item
+- `GET /api/found-items/{id}` - Get item
+- `PUT /api/found-items/{id}` - Update item
+- `DELETE /api/found-items/{id}` - Delete item
+- `GET /api/found-items/categories/list` - List distinct categories
 
-### Statystyki
-- `GET /api/stats` - Ogólne statystyki systemu
+### Statistics
+- `GET /api/stats` - Item counts, top categories, top municipalities
 
-### Health Check
-- `GET /health` - Status API
+### OData
+- `GET /odata/FoundItems` - OData query interface (`$filter`, `$orderby`, `$top`, `$skip`, `$count`)
 
-## Uwaga
+### Metadata
+- `GET /metadata` - DCAT-AP catalog metadata
+- `GET /metadata/schema` - JSON schema for found items
+- `GET /metadata/dcat` - RDF endpoint (placeholder)
+- `GET /metadata/distribution/{id}` - Distribution metadata
 
-Jednostki terytorialne są obsługiwane bezpośrednio przez frontend (z pliku JSON).
-Backend zajmuje się tylko zarządzaniem znalezionymi rzeczami i statystykami.
+### Health
+- `GET /health` - Returns `{"status": "ok"}`
+
+## Note
+
+Territorial units are handled by the frontend (from a bundled JSON file). The backend manages found items and statistics only.

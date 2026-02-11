@@ -1,59 +1,75 @@
-# RzeczyZnalezione
+# Frontend - Zguba.gov
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Angular 19 frontend for the lost & found reporting application.
 
-## Development server
-
-To start a local development server, run:
+## Setup
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Development
 
 ```bash
-ng generate component component-name
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Open http://localhost:4200. The app reloads automatically on file changes.
 
-```bash
-ng generate --help
-```
+The development server proxies API requests to `http://localhost:8000` (configured in `src/environments/environment.development.ts`).
 
-## Building
-
-To build the project run:
+## Build
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Build artifacts are output to `dist/`. For production:
 
 ```bash
-ng test
+ng build --configuration production
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+Or with Docker:
 
 ```bash
-ng e2e
+docker build -t zguba-frontend .
+docker run -p 80:80 zguba-frontend
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+The Docker image uses nginx to serve the SPA and proxy `/api/`, `/odata/`, and `/metadata/` routes to the backend.
 
-## Additional Resources
+## Testing
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm test       # Unit tests (Karma)
+ng e2e         # End-to-end tests
+```
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── app.component.ts       # Main component (form, search, export)
+│   ├── app.component.html     # Template
+│   ├── app.component.css      # Styles
+│   └── services/
+│       ├── found-items.service.ts        # API client for found items
+│       └── territorial-units.service.ts  # Territorial unit data (from JSON)
+├── assets/
+│   └── territorial-units.json  # Polish administrative units dataset
+├── environments/
+│   ├── environment.ts              # Production config
+│   └── environment.development.ts  # Development config
+└── styles.css                  # Global styles (GOV.PL theme)
+```
+
+## Key Features
+
+- Multi-step form for reporting found items
+- Autocomplete for territorial units (voivodeships, counties, municipalities)
+- Search and filter found items
+- Export to JSON and CSV
+- Responsive design following GOV.PL guidelines
+- WCAG/ARIA accessibility attributes
