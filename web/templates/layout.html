@@ -11,8 +11,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>&#127477;&#127473; Portal Rzeczy Znalezionych</h1>
-            <p>System rejestracji znalezionych przedmiot&oacute;w &ndash; dane.gov.pl</p>
+            <div class="header-content">
+                <img src="/static/img/polish_eagle.svg" alt="Godło RP" class="header-eagle">
+                <div>
+                    <h1>Portal Rzeczy Znalezionych</h1>
+                    <p>System rejestracji znalezionych przedmiot&oacute;w &ndash; dane.gov.pl</p>
+                </div>
+            </div>
         </header>
         <div class="content">
             {{template "content" .}}
@@ -26,7 +31,11 @@
         if (!form) return;
         var inputs = form.querySelectorAll('#wizard-container input, #wizard-container select, #wizard-container textarea');
         inputs.forEach(function(input) {
-            var hidden = form.querySelector('input[type=hidden][name="' + input.name + '"]');
+            if (!input.name) return;
+            // Update parameters for THIS request
+            evt.detail.parameters[input.name] = input.value;
+            // Sync to form-level hidden fields for future step transitions
+            var hidden = form.querySelector(':scope > input[type=hidden][name="' + input.name + '"]');
             if (hidden) hidden.value = input.value;
         });
     });

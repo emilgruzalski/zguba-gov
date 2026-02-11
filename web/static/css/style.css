@@ -56,6 +56,18 @@ header {
   border-bottom: 4px solid var(--gov-blue-dark);
 }
 
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-eagle {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
 header h1 {
   font-size: 32px;
   font-weight: 700;

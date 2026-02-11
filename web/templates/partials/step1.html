@@ -19,13 +19,7 @@
         <label for="municipalityName">Nazwa samorządu</label>
         <input type="text" name="municipalityName" id="municipalityName" value="{{.MunicipalityName}}"
                placeholder="Zacznij pisać nazwę..."
-               autocomplete="off"
-               hx-get="/autocomplete"
-               hx-trigger="input changed delay:300ms"
-               hx-target="#autocomplete-results"
-               hx-include="[name='municipalityType']"
-               hx-params="municipalityName"
-               hx-vals='{"q": ""}'>
+               autocomplete="off">
         <div id="autocomplete-results" class="autocomplete-list" style="display:none;"></div>
     </div>
 
