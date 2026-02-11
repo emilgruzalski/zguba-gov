@@ -76,4 +76,3 @@ backend/
 ## Note
 
 Territorial units are handled by the frontend (from a bundled JSON file). The backend manages found items and statistics only.
- 
