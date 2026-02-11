@@ -1,0 +1,45 @@
+{{define "progress.html"}}
+<div id="progress-bar">
+    <div class="progress-line">
+        <div class="progress-fill" style="width: {{.Progress}}%"></div>
+    </div>
+    <div class="progress-steps">
+        {{range $i := seq .TotalSteps}}
+        <div class="progress-step{{if lt $i $.CurrentStep}} completed{{end}}{{if eq $i $.CurrentStep}} active{{end}}">
+            <div class="step-circle">
+                {{if lt $i $.CurrentStep}}<span class="step-checkmark">✓</span>{{else}}{{$i}}{{end}}
+            </div>
+            <span class="step-label">
+                {{if eq $i 1}}Samorząd{{end}}
+                {{if eq $i 2}}Przedmiot{{end}}
+                {{if eq $i 3}}Odbiór{{end}}
+                {{if eq $i 4}}Podsumowanie{{end}}
+            </span>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}
+
+{{define "progress_oob.html"}}
+<div id="progress-bar" hx-swap-oob="true">
+    <div class="progress-line">
+        <div class="progress-fill" style="width: {{.Progress}}%"></div>
+    </div>
+    <div class="progress-steps">
+        {{range $i := seq .TotalSteps}}
+        <div class="progress-step{{if lt $i $.CurrentStep}} completed{{end}}{{if eq $i $.CurrentStep}} active{{end}}">
+            <div class="step-circle">
+                {{if lt $i $.CurrentStep}}<span class="step-checkmark">✓</span>{{else}}{{$i}}{{end}}
+            </div>
+            <span class="step-label">
+                {{if eq $i 1}}Samorząd{{end}}
+                {{if eq $i 2}}Przedmiot{{end}}
+                {{if eq $i 3}}Odbiór{{end}}
+                {{if eq $i 4}}Podsumowanie{{end}}
+            </span>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

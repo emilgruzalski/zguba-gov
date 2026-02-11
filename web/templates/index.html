@@ -1,0 +1,35 @@
+{{define "content"}}
+<div id="modals"></div>
+
+<div class="progress-section">
+    <div class="progress-container">
+        {{template "progress.html" .}}
+    </div>
+</div>
+
+<form id="wizard-form">
+    <input type="hidden" name="currentStep" value="{{.CurrentStep}}">
+    <!-- Hidden fields preserve all form data across HTMX swaps -->
+    <input type="hidden" name="municipalityName" value="{{.MunicipalityName}}">
+    <input type="hidden" name="municipalityType" value="{{.MunicipalityType}}">
+    <input type="hidden" name="contactEmail" value="{{.ContactEmail}}">
+    <input type="hidden" name="itemName" value="{{.ItemName}}">
+    <input type="hidden" name="itemCategory" value="{{.ItemCategory}}">
+    <input type="hidden" name="itemDate" value="{{.ItemDate}}">
+    <input type="hidden" name="itemLocation" value="{{.ItemLocation}}">
+    <input type="hidden" name="itemStatus" value="{{.ItemStatus}}">
+    <input type="hidden" name="itemDescription" value="{{.ItemDescription}}">
+    <input type="hidden" name="storageDeadline" value="{{.StorageDeadline}}">
+    <input type="hidden" name="pickupLocation" value="{{.PickupLocation}}">
+    <input type="hidden" name="pickupHours" value="{{.PickupHours}}">
+    <input type="hidden" name="contactPerson" value="{{.ContactPerson}}">
+
+    <div id="wizard-container">
+        {{template "step1.html" .}}
+    </div>
+</form>
+
+<div id="records-container">
+    {{template "records.html" .}}
+</div>
+{{end}}

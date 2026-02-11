@@ -1,0 +1,66 @@
+{{define "step2.html"}}
+<div>
+    <input type="hidden" name="currentStep" value="2">
+    <h2 class="step-title">Dane Przedmiotu</h2>
+    <p class="step-description">Opisz znaleziony przedmiot.</p>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="itemName">Nazwa przedmiotu</label>
+            <input type="text" name="itemName" id="itemName" value="{{.ItemName}}" placeholder="np. Portfel skórzany">
+        </div>
+        <div class="form-group">
+            <label for="itemCategory">Kategoria</label>
+            <select name="itemCategory" id="itemCategory">
+                <option value="">-- Wybierz kategorię --</option>
+                <option value="dokumenty"{{if eq .ItemCategory "dokumenty"}} selected{{end}}>Dokumenty</option>
+                <option value="telefony"{{if eq .ItemCategory "telefony"}} selected{{end}}>Telefony</option>
+                <option value="odzież"{{if eq .ItemCategory "odzież"}} selected{{end}}>Odzież</option>
+                <option value="klucze"{{if eq .ItemCategory "klucze"}} selected{{end}}>Klucze</option>
+                <option value="biżuteria"{{if eq .ItemCategory "biżuteria"}} selected{{end}}>Biżuteria</option>
+                <option value="inne"{{if eq .ItemCategory "inne"}} selected{{end}}>Inne</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="itemDate">Data znalezienia</label>
+            <input type="date" name="itemDate" id="itemDate" value="{{.ItemDate}}">
+        </div>
+        <div class="form-group">
+            <label for="itemLocation">Miejsce znalezienia</label>
+            <input type="text" name="itemLocation" id="itemLocation" value="{{.ItemLocation}}" placeholder="np. ul. Marszałkowska 1">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="itemStatus">Status</label>
+        <select name="itemStatus" id="itemStatus">
+            <option value="available"{{if or (eq .ItemStatus "available") (eq .ItemStatus "")}} selected{{end}}>Oczekuje na odbiór</option>
+            <option value="claimed"{{if eq .ItemStatus "claimed"}} selected{{end}}>Odebrana</option>
+            <option value="expired"{{if eq .ItemStatus "expired"}} selected{{end}}>Przekazana</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="itemDescription">Opis (opcjonalnie)</label>
+        <textarea name="itemDescription" id="itemDescription" placeholder="Dodatkowy opis przedmiotu...">{{.ItemDescription}}</textarea>
+    </div>
+
+    <div class="buttons">
+        <button type="button" class="btn-secondary"
+                hx-post="/steps/prev"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            ← Wstecz
+        </button>
+        <button type="button" class="btn-primary"
+                hx-post="/steps/next"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            Dalej →
+        </button>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,13 @@
+{{define "submit_result.html"}}
+{{template "step1.html" .}}
+
+<div id="modals" hx-swap-oob="innerHTML">
+    {{template "success_modal.html" .}}
+</div>
+
+<div id="records-container" hx-swap-oob="true">
+    {{template "records.html" .}}
+</div>
+
+{{template "progress_oob.html" .}}
+{{end}}

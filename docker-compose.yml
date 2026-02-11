@@ -1,20 +1,12 @@
 services:
-  backend:
-    build: ./backend
+  app:
+    build: .
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite+aiosqlite:///./zguba_gov.db
-      - CORS_ORIGINS=http://localhost,http://localhost:80
+      - DATABASE_URL=/app/data/zguba.db
     volumes:
-      - backend-data:/app
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
+      - app-data:/app/data
 
 volumes:
-  backend-data:
+  app-data:

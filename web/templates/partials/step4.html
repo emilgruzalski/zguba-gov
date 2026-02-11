@@ -1,0 +1,121 @@
+{{define "step4.html"}}
+<div>
+    <input type="hidden" name="currentStep" value="4">
+    <h2 class="step-title">Podsumowanie</h2>
+    <p class="step-description">Sprawdź wprowadzone dane przed wysłaniem.</p>
+
+    <div class="summary-section">
+        <h3>Dane samorządu</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span class="summary-label">Typ samorządu:</span>
+                <span class="summary-value">{{.MunicipalityType}}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Nazwa:</span>
+                <span class="summary-value">{{.MunicipalityName}}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Email:</span>
+                <span class="summary-value">{{.ContactEmail}}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-section">
+        <h3>Dane przedmiotu</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span class="summary-label">Nazwa:</span>
+                <span class="summary-value">{{.ItemName}}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Kategoria:</span>
+                <span class="summary-value">{{.ItemCategory}}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Data znalezienia:</span>
+                <span class="summary-value">{{.ItemDate}}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Miejsce:</span>
+                <span class="summary-value">{{.ItemLocation}}</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Status:</span>
+                <span class="summary-value">{{if eq .ItemStatus "available"}}Oczekuje na odbiór{{else if eq .ItemStatus "claimed"}}Odebrana{{else if eq .ItemStatus "expired"}}Przekazana{{else}}{{.ItemStatus}}{{end}}</span>
+            </div>
+            {{if .ItemDescription}}
+            <div class="summary-item">
+                <span class="summary-label">Opis:</span>
+                <span class="summary-value">{{.ItemDescription}}</span>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="summary-section">
+        <h3>Warunki odbioru</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span class="summary-label">Termin przechowania:</span>
+                <span class="summary-value">{{.StorageDeadline}} dni</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Miejsce odbioru:</span>
+                <span class="summary-value">{{.PickupLocation}}</span>
+            </div>
+            {{if .PickupHours}}
+            <div class="summary-item">
+                <span class="summary-label">Godziny odbioru:</span>
+                <span class="summary-value">{{.PickupHours}}</span>
+            </div>
+            {{end}}
+            {{if .ContactPerson}}
+            <div class="summary-item">
+                <span class="summary-label">Osoba kontaktowa:</span>
+                <span class="summary-value">{{.ContactPerson}}</span>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="export-section">
+        <h3>Eksportuj dane</h3>
+        <div class="export-buttons">
+            <a class="btn-outline" href="#"
+               onclick="exportData('json'); return false;">
+                Pobierz JSON
+            </a>
+            <a class="btn-outline" href="#"
+               onclick="exportData('csv'); return false;">
+                Pobierz CSV
+            </a>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button type="button" class="btn-secondary"
+                hx-post="/steps/prev"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            ← Wstecz
+        </button>
+        <button type="button" class="btn-primary"
+                hx-post="/submit"
+                hx-target="#wizard-container"
+                hx-include="#wizard-form">
+            Wyślij zgłoszenie
+        </button>
+    </div>
+</div>
+
+<script>
+function exportData(format) {
+    var form = document.getElementById('wizard-form');
+    var formData = new FormData(form);
+    var params = new URLSearchParams(formData);
+    window.location.href = '/export/' + format + '?' + params.toString();
+}
+</script>
+{{end}}
