@@ -1,50 +1,21 @@
-from pydantic import BaseModel, EmailStr, Field
+"""DCAT-AP schemas for dane.gov.pl integration."""
+
+from pydantic import Field
 from typing import Optional, List
-from datetime import datetime
+
+from .found_item import (
+    MunicipalityInfo,
+    ItemInfo,
+    PickupInfo,
+    FoundItemCreate,
+    FoundItemUpdate,
+    FoundItemResponse as BaseFoundItemResponse,
+)
 
 
-class MunicipalityInfo(BaseModel):
-    name: str
-    type: str
-    contactEmail: EmailStr
+class FoundItemResponse(BaseFoundItemResponse):
+    """Response model with dane.gov.pl / DCAT compatibility."""
 
-
-class ItemInfo(BaseModel):
-    name: str
-    category: str
-    date: str
-    location: str
-    status: str = "available"
-    description: Optional[str] = None
-
-
-class PickupInfo(BaseModel):
-    deadline: int
-    location: str
-    hours: Optional[str] = None
-    contact: Optional[str] = None
-    method: Optional[str] = Field(default="personal", description="Method of pickup: personal, mail, etc.")
-
-
-class FoundItemCreate(BaseModel):
-    municipality: MunicipalityInfo
-    item: ItemInfo
-    pickup: PickupInfo
-    categories: Optional[List[str]] = None
-
-
-class FoundItemUpdate(BaseModel):
-    municipality: Optional[MunicipalityInfo] = None
-    item: Optional[ItemInfo] = None
-    pickup: Optional[PickupInfo] = None
-    categories: Optional[List[str]] = None
-
-
-class FoundItemResponse(BaseModel):
-    """
-    Response model z obsługą dane.gov.pl / DCAT compatibility
-    """
-    # DCAT Fields
     context: str = Field(default="https://www.w3.org/ns/dcat", alias="@context")
     type: str = Field(default="dcat:Dataset", alias="@type")
     dct_identifier: str = Field(alias="dct:identifier")
@@ -58,27 +29,18 @@ class FoundItemResponse(BaseModel):
     )
     dcat_keyword: List[str] = Field(alias="dcat:keyword")
     dcat_landingPage: Optional[str] = Field(default=None, alias="dcat:landingPage")
-    
-    # Core Fields
-    id: str
-    municipality: MunicipalityInfo
-    item: ItemInfo
-    pickup: PickupInfo
-    categories: List[str]
-    createdAt: Optional[str] = None
-    updatedAt: Optional[str] = None
-    
+
     class Config:
         from_attributes = True
-        populate_by_name = True  # Allow both original and aliased names
+        populate_by_name = True
         json_schema_extra = {
             "example": {
                 "id": "550e8400-e29b-41d4-a716-446655440000",
                 "@context": "https://www.w3.org/ns/dcat",
                 "@type": "dcat:Dataset",
                 "dct:identifier": "550e8400-e29b-41d4-a716-446655440000",
-                "dct:title": "Portfel skórzany brązowy",
-                "dct:description": "Brązowy portfel ze skóry naturalnej",
+                "dct:title": "Portfel skorzany brazowy",
+                "dct:description": "Brazowy portfel ze skory naturalnej",
                 "dct:license": "http://creativecommons.org/licenses/by/4.0/",
                 "dcat:keyword": ["dokumenty", "portfele"],
                 "municipality": {
@@ -87,12 +49,12 @@ class FoundItemResponse(BaseModel):
                     "contactEmail": "kontakt@um.warszawa.pl"
                 },
                 "item": {
-                    "name": "Portfel skórzany brązowy",
+                    "name": "Portfel skorzany brazowy",
                     "category": "dokumenty",
                     "date": "2025-12-01",
-                    "location": "Park Łazienkowski",
+                    "location": "Park Lazienkowski",
                     "status": "available",
-                    "description": "Brązowy portfel ze skóry"
+                    "description": "Brazowy portfel ze skory"
                 }
             }
         }

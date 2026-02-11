@@ -1,6 +1,4 @@
-"""
-Metadata router dla dane.gov.pl integracji
-"""
+"""Metadata router for dane.gov.pl integration."""
 from fastapi import APIRouter
 from datetime import datetime
 
@@ -9,10 +7,7 @@ router = APIRouter(prefix="/metadata", tags=["metadata"])
 
 @router.get("", tags=["metadata"])
 async def get_dataset_metadata():
-    """
-    Zwraca metadane datasetu w formacie DCAT-AP
-    Zgodny z wymogami dane.gov.pl
-    """
+    """Return dataset metadata in DCAT-AP format, compatible with dane.gov.pl."""
     return {
         "@context": "https://www.w3.org/ns/dcat",
         "@type": "dcat:Catalog",
@@ -75,9 +70,7 @@ async def get_dataset_metadata():
 
 @router.get("/dcat", tags=["metadata"])
 async def get_dcat_rdf():
-    """
-    Zwraca metadane w formacie Turtle (RDF)
-    """
+    """Return metadata in Turtle (RDF) format."""
     return {
         "message": "RDF endpoint - TODO",
         "format": "text/turtle",
@@ -87,9 +80,7 @@ async def get_dcat_rdf():
 
 @router.get("/distribution/{distribution_id}", tags=["metadata"])
 async def get_distribution_metadata(distribution_id: str):
-    """
-    Zwraca metadane specificznej dystrybucji
-    """
+    """Return metadata for a specific distribution."""
     distributions = {
         "json-api": {
             "@type": "dcat:Distribution",

@@ -15,15 +15,13 @@ router = APIRouter(prefix="/api/found-items", tags=["found-items"])
 async def get_found_items(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
-    category: Optional[str] = Query(None, description="Kategoria przedmiotu"),
-    municipality: Optional[str] = Query(None, description="Nazwa gminy"),
+    category: Optional[str] = Query(None, description="Item category"),
+    municipality: Optional[str] = Query(None, description="Municipality name"),
     status: Optional[str] = Query(None, description="Status: available, claimed, expired"),
-    search: Optional[str] = Query(None, description="Wyszukaj w nazwie lub opisie"),
+    search: Optional[str] = Query(None, description="Search in name or description"),
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Pobierz listę znalezionych rzeczy z opcjonalnymi filtrami
-    """
+    """List found items with optional filters."""
     query = select(FoundItem)
     
     if category:
@@ -58,9 +56,7 @@ async def create_found_item(
     item_data: FoundItemCreate,
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Dodaj nową znalezioną rzecz
-    """
+    """Create a new found item."""
     item_id = str(uuid.uuid4())
     
     db_item = FoundItem(
@@ -93,16 +89,14 @@ async def get_found_item(
     item_id: str,
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Pobierz szczegóły znalezionej rzeczy
-    """
+    """Get details of a found item."""
     result = await db.execute(
         select(FoundItem).where(FoundItem.id == item_id)
     )
     item = result.scalar_one_or_none()
     
     if not item:
-        raise HTTPException(status_code=404, detail="Przedmiot nie znaleziony")
+        raise HTTPException(status_code=404, detail="Item not found")
     
     return FoundItemResponse(**item.to_dict())
 
@@ -113,16 +107,14 @@ async def update_found_item(
     item_data: FoundItemUpdate,
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Zaktualizuj znalezioną rzecz
-    """
+    """Update a found item."""
     result = await db.execute(
         select(FoundItem).where(FoundItem.id == item_id)
     )
     db_item = result.scalar_one_or_none()
     
     if not db_item:
-        raise HTTPException(status_code=404, detail="Przedmiot nie znaleziony")
+        raise HTTPException(status_code=404, detail="Item not found")
     
     # Update fields
     if item_data.municipality:
@@ -170,16 +162,14 @@ async def delete_found_item(
     item_id: str,
     db: AsyncSession = Depends(get_db)
 ):
-    """
-    Usuń znalezioną rzecz
-    """
+    """Delete a found item."""
     result = await db.execute(
         select(FoundItem).where(FoundItem.id == item_id)
     )
     db_item = result.scalar_one_or_none()
     
     if not db_item:
-        raise HTTPException(status_code=404, detail="Przedmiot nie znaleziony")
+        raise HTTPException(status_code=404, detail="Item not found")
     
     await db.delete(db_item)
     await db.commit()
@@ -189,9 +179,7 @@ async def delete_found_item(
 
 @router.get("/categories/list")
 async def get_categories(db: AsyncSession = Depends(get_db)):
-    """
-    Pobierz listę wszystkich używanych kategorii
-    """
+    """List all distinct item categories."""
     result = await db.execute(
         select(FoundItem.item_category)
         .distinct()

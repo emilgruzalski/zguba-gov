@@ -4,7 +4,6 @@ from contextlib import asynccontextmanager
 from config import settings
 from database import init_db
 from routers import found_items_router, stats_router, metadata_router, odata_router
-import re
 
 
 @asynccontextmanager

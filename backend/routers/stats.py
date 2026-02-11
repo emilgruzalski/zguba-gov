@@ -9,9 +9,7 @@ router = APIRouter(prefix="/api/stats", tags=["stats"])
 
 @router.get("")
 async def get_stats(db: AsyncSession = Depends(get_db)):
-    """
-    Pobierz ogólne statystyki systemu
-    """
+    """Get overall system statistics."""
     # Count total found items
     total_items_result = await db.execute(
         select(func.count(FoundItem.id))

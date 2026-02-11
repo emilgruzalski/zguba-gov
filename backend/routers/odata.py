@@ -1,6 +1,4 @@
-"""
-OData Router dla dane.gov.pl compatibility
-"""
+"""OData router for dane.gov.pl compatibility."""
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
@@ -66,8 +64,9 @@ async def get_odata_items(
     }
     
     if count:
-        count_result = await db.execute(select(FoundItem))
-        total_count = len(count_result.scalars().all())
+        from sqlalchemy import func
+        count_result = await db.execute(select(func.count(FoundItem.id)))
+        total_count = count_result.scalar()
         response["odata.count"] = total_count
     
     return response
@@ -75,9 +74,7 @@ async def get_odata_items(
 
 @router.get("/$metadata", response_model=dict)
 async def get_odata_metadata():
-    """
-    OData Metadata - zwraca schemat dostępnych pól
-    """
+    """OData Metadata - returns the schema of available fields."""
     return {
         "edmx:Edmx": {
             "@xmlns:edmx": "http://schemas.microsoft.com/ado/2007/06/edmx",

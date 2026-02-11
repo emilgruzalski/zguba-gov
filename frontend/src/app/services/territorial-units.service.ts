@@ -1,17 +1,16 @@
-// territorial-units.service.ts
 import { Injectable } from '@angular/core';
 import territorialUnitsData from '../../assets/territorial-units.json';
 
 export interface TerritorialUnit {
   name: string;
   type: 'wojewodztwo' | 'powiat' | 'gmina' | 'miasto';
-  parentName?: string; // np. dla powiatu: nazwa województwa
-  fullName: string; // pełna nazwa z kontekstem
-  id?: string; // ID z pliku
-  email?: string; // Email z pliku
-  officeName?: string; // Nazwa urzędu
-  voivodeship?: string; // Województwo
-  county?: string; // Powiat
+  parentName?: string;
+  fullName: string;
+  id?: string;
+  email?: string;
+  officeName?: string;
+  voivodeship?: string;
+  county?: string;
 }
 
 interface LocalDataUnit {
@@ -33,7 +32,6 @@ interface LocalDataUnit {
 })
 export class TerritorialUnitsService {
   private units: TerritorialUnit[] = [];
-  private wojewodztwaMap = new Map<string, string>(); // id -> nazwa
   private loading = false;
   private loaded = false;
 
@@ -43,23 +41,19 @@ export class TerritorialUnitsService {
 
   private async loadDataFromLocalFile(): Promise<void> {
     if (this.loading || this.loaded) return;
-    
+
     this.loading = true;
-    
+
     try {
-      console.log('🔄 Rozpoczynam ładowanie danych z lokalnego pliku...');
-      
       const data = territorialUnitsData as LocalDataUnit[];
-      
-      // Mapuj dane z pliku do struktury używanej w aplikacji
+
       this.units = data.map(unit => {
         let fullName = unit.name;
-        
-        // Dodaj kontekst dla pełnej nazwy
+
         if (unit.type === 'gmina' || unit.type === 'powiat') {
           fullName = `${unit.name} (woj. ${unit.voivodeship})`;
         }
-        
+
         return {
           id: unit.id,
           name: unit.name,
@@ -72,50 +66,17 @@ export class TerritorialUnitsService {
           county: unit.county
         };
       });
-      
+
       this.loaded = true;
-      console.log(`✅ Załadowano łącznie ${this.units.length} jednostek terytorialnych z lokalnego pliku`);
-      console.log(`   - Województwa: ${this.units.filter(u => u.type === 'wojewodztwo').length}`);
-      console.log(`   - Powiaty: ${this.units.filter(u => u.type === 'powiat').length}`);
-      console.log(`   - Miasta: ${this.units.filter(u => u.type === 'miasto').length}`);
-      console.log(`   - Gminy: ${this.units.filter(u => u.type === 'gmina').length}`);
     } catch (error) {
-      console.error('❌ Błąd podczas ładowania danych z lokalnego pliku:', error);
+      console.error('Blad podczas ladowania danych z lokalnego pliku:', error);
       this.loadBackupData();
     } finally {
       this.loading = false;
     }
   }
 
-  private async loadWojewodztwa(): Promise<void> {
-    // Ta metoda nie jest już używana - dane są ładowane z pliku lokalnego
-  }
-
-  private async loadPowiatyIMiasta(): Promise<void> {
-    // Ta metoda nie jest już używana - dane są ładowane z pliku lokalnego
-  }
-
-  private async loadGminy(): Promise<void> {
-    // Ta metoda nie jest już używana - dane są ładowane z pliku lokalnego
-  }
-
-  private getWojewodztwoFromParentId(parentId: string): string {
-    // Ta metoda nie jest już używana
-    return 'nieznane';
-  }
-
-  private getWojewodztwoFromUnitId(unitId: string): string {
-    // Ta metoda nie jest już używana
-    return 'nieznane';
-  }
-
-  private formatWojewodztwoName(name: string): string {
-    // Ta metoda nie jest już używana
-    return name;
-  }
-
   private loadBackupData(): void {
-    // Województwa
     const wojewodztwa = [
       'dolnośląskie', 'kujawsko-pomorskie', 'lubelskie', 'lubuskie',
       'łódzkie', 'małopolskie', 'mazowieckie', 'opolskie',
@@ -131,7 +92,6 @@ export class TerritorialUnitsService {
       });
     });
 
-    // Przykładowe powiaty (reprezentatywna lista najważniejszych)
     const powiaty = [
       { name: 'Powiat warszawski zachodni', wojewodztwo: 'mazowieckie' },
       { name: 'Powiat piaseczyński', wojewodztwo: 'mazowieckie' },
@@ -163,7 +123,6 @@ export class TerritorialUnitsService {
       });
     });
 
-    // Miasta na prawach powiatu
     const miastaNaPrawachPowiatu = [
       { name: 'Warszawa', wojewodztwo: 'mazowieckie' },
       { name: 'Kraków', wojewodztwo: 'małopolskie' },
@@ -245,7 +204,6 @@ export class TerritorialUnitsService {
       });
     });
 
-    // Przykładowe gminy (reprezentatywne dla największych aglomeracji)
     const gminy = [
       { name: 'Gmina Lesznowola', wojewodztwo: 'mazowieckie' },
       { name: 'Gmina Konstancin-Jeziorna', wojewodztwo: 'mazowieckie' },
@@ -272,23 +230,22 @@ export class TerritorialUnitsService {
   }
 
   /**
-   * Wyszukuje jednostki terytorialne na podstawie zapytania
-   * @param query - fraza do wyszukania
+   * Wyszukuje jednostki terytorialne na podstawie zapytania.
+   * @param query - fraza do wyszukania (min. 2 znaki)
    * @param type - opcjonalny filtr typu jednostki
-   * @returns tablica pasujących jednostek
+   * @returns tablica pasujacych jednostek (max 20)
    */
   async search(query: string, type?: TerritorialUnit['type']): Promise<TerritorialUnit[]> {
-    // Czekaj na załadowanie danych jeśli jeszcze nie są gotowe
     if (this.loading) {
       await this.waitForLoad();
     }
-    
+
     if (!query || query.length < 2) {
       return [];
     }
 
     const normalizedQuery = this.normalize(query);
-    
+
     let filtered = this.units.filter(unit => {
       const matchesQuery = this.normalize(unit.fullName).includes(normalizedQuery) ||
                            this.normalize(unit.name).includes(normalizedQuery);
@@ -296,22 +253,18 @@ export class TerritorialUnitsService {
       return matchesQuery && matchesType;
     });
 
-    // Sortuj: najpierw te które zaczynają się od query, potem reszta
     filtered.sort((a, b) => {
       const aStarts = this.normalize(a.name).startsWith(normalizedQuery);
       const bStarts = this.normalize(b.name).startsWith(normalizedQuery);
-      
+
       if (aStarts && !bStarts) return -1;
       if (!aStarts && bStarts) return 1;
       return a.name.localeCompare(b.name, 'pl');
     });
 
-    return filtered.slice(0, 20); // Zwróć maksymalnie 20 wyników
+    return filtered.slice(0, 20);
   }
 
-  /**
-   * Czeka na załadowanie danych
-   */
   private waitForLoad(): Promise<void> {
     return new Promise((resolve) => {
       const checkInterval = setInterval(() => {
@@ -320,8 +273,7 @@ export class TerritorialUnitsService {
           resolve();
         }
       }, 100);
-      
-      // Timeout po 10 sekundach
+
       setTimeout(() => {
         clearInterval(checkInterval);
         resolve();
@@ -329,38 +281,31 @@ export class TerritorialUnitsService {
     });
   }
 
-  /**
-   * Pobiera wszystkie jednostki określonego typu
-   */
+  /** Pobiera wszystkie jednostki okreslonego typu. */
   getByType(type: TerritorialUnit['type']): TerritorialUnit[] {
     return this.units.filter(unit => unit.type === type);
   }
 
   /**
-   * Generuje sugerowany email kontaktowy dla jednostki terytorialnej
-   * Preferuje rzeczywisty email z bazy danych, jeśli dostępny
+   * Generuje sugerowany email kontaktowy dla jednostki terytorialnej.
+   * Preferuje rzeczywisty email z bazy danych, jesli dostepny.
    */
   generateContactEmail(unit: TerritorialUnit): string {
-    // Jeśli jednostka ma rzeczywisty email w bazie, użyj go
     if (unit.email && unit.email.trim()) {
-      // Jeśli są multiple emaile (oddzielone średnikiem lub przecinkiem), użyj pierwszego
       const firstEmail = unit.email.split(/[;,]/)[0].trim();
       return firstEmail;
     }
 
-    // Fallback: generuj email na podstawie nazwy
     let nazwa = unit.name
       .replace(/^Województwo\s+/i, '')
       .replace(/^Powiat\s+(m\.\s+)?/i, '')
       .replace(/^Gmina\s+/i, '')
       .replace(/^Miasto\s+/i, '');
 
-    // Normalizuj do slug (bez polskich znaków, małe litery, myślniki zamiast spacji)
     const slug = this.normalize(nazwa)
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '');
 
-    // Generuj email w zależności od typu
     switch (unit.type) {
       case 'wojewodztwo':
         return `kontakt@${slug}.uw.gov.pl`;
@@ -375,9 +320,7 @@ export class TerritorialUnitsService {
     }
   }
 
-  /**
-   * Normalizuje tekst dla porównania (małe litery, bez polskich znaków)
-   */
+  /** Normalizuje tekst dla porownania (male litery, bez polskich znakow). */
   private normalize(text: string): string {
     return text
       .toLowerCase()

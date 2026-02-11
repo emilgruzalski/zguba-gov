@@ -1,34 +1,8 @@
-// app.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TerritorialUnitsService, TerritorialUnit } from './services/territorial-units.service';
 import { FoundItemsService, FoundItemCreate, FoundItemResponse } from './services/found-items.service';
-
-interface FoundItem {
-  id: string;
-  municipality: {
-    name: string;
-    type: string;
-    contactEmail: string;
-  };
-  item: {
-    name: string;
-    category: string;
-    date: string;
-    location: string;
-    status: string;
-    description?: string;
-  };
-  pickup: {
-    deadline: number;
-    location: string;
-    hours?: string;
-    contact?: string;
-  };
-  categories: string[];
-  createdAt: string;
-}
 
 @Component({
   selector: 'app-root',
@@ -44,9 +18,9 @@ export class AppComponent implements OnInit {
   errorMessages: string[] = [];
   showSuccessModal: boolean = false;
   successMessage: string = '';
-  
+
   form: FormGroup;
-  items: FoundItem[] = [];
+  items: FoundItemResponse[] = [];
   
   // Autouzupełnianie
   filteredUnits: TerritorialUnit[] = [];
@@ -278,8 +252,8 @@ export class AppComponent implements OnInit {
     }
   }
 
-  submitData(): void {
-    const payload: FoundItemCreate = {
+  private buildPayloadFromForm(): FoundItemCreate {
+    return {
       municipality: {
         name: this.form.value.municipalityName,
         type: this.form.value.municipalityType,
@@ -301,11 +275,14 @@ export class AppComponent implements OnInit {
       },
       categories: this.form.value.categories || []
     };
+  }
+
+  submitData(): void {
+    const payload = this.buildPayloadFromForm();
 
     this.foundItemsService.create(payload).subscribe({
       next: (created: FoundItemResponse) => {
-        // Prepend to list
-        this.items.unshift(created as any);
+        this.items.unshift(created);
         this.saveItems();
         this.showSuccessMessage('Dane zostały pomyślnie udostępnione!');
         this.resetForm();
@@ -319,80 +296,38 @@ export class AppComponent implements OnInit {
   }
 
   exportJSON(): void {
-    const currentItem: FoundItem = {
+    const payload = this.buildPayloadFromForm();
+    const exportItem = {
       id: this.generateId(),
-      municipality: {
-        name: this.form.value.municipalityName,
-        type: this.form.value.municipalityType,
-        contactEmail: this.form.value.contactEmail
-      },
-      item: {
-        name: this.form.value.itemName,
-        category: this.form.value.itemCategory,
-        date: this.form.value.itemDate,
-        location: this.form.value.itemLocation,
-        status: this.form.value.itemStatus,
-        description: this.form.value.itemDescription
-      },
-      pickup: {
-        deadline: this.form.value.storageDeadline,
-        location: this.form.value.pickupLocation,
-        hours: this.form.value.pickupHours,
-        contact: this.form.value.contactPerson
-      },
-      categories: this.form.value.categories,
+      ...payload,
       createdAt: new Date().toISOString()
     };
-
-    const dataStr = JSON.stringify([currentItem], null, 2);
+    const dataStr = JSON.stringify([exportItem], null, 2);
     this.downloadFile(dataStr, `rzeczy_znalezione_${Date.now()}.json`, 'application/json');
   }
 
   exportCSV(): void {
-    let csv = 'ID,Samorząd,Typ,Email,Przedmiot,Kategoria,Data,Lokalizacja,Status,Odbiór,Godziny,Osoba Kontaktowa,Data Dodania\n';
-    
-    const currentItem: FoundItem = {
-      id: this.generateId(),
-      municipality: {
-        name: this.form.value.municipalityName,
-        type: this.form.value.municipalityType,
-        contactEmail: this.form.value.contactEmail
-      },
-      item: {
-        name: this.form.value.itemName,
-        category: this.form.value.itemCategory,
-        date: this.form.value.itemDate,
-        location: this.form.value.itemLocation,
-        status: this.form.value.itemStatus,
-        description: this.form.value.itemDescription
-      },
-      pickup: {
-        deadline: this.form.value.storageDeadline,
-        location: this.form.value.pickupLocation,
-        hours: this.form.value.pickupHours,
-        contact: this.form.value.contactPerson
-      },
-      categories: this.form.value.categories,
-      createdAt: new Date().toISOString()
-    };
+    const payload = this.buildPayloadFromForm();
+    const createdAt = new Date().toISOString();
+    const id = this.generateId();
 
+    const header = 'ID,Samorząd,Typ,Email,Przedmiot,Kategoria,Data,Lokalizacja,Status,Odbiór,Godziny,Osoba Kontaktowa,Data Dodania\n';
     const row = [
-      currentItem.id,
-      currentItem.municipality.name,
-      currentItem.municipality.type,
-      currentItem.municipality.contactEmail,
-      currentItem.item.name,
-      currentItem.item.category,
-      currentItem.item.date,
-      currentItem.item.location,
-      currentItem.item.status,
-      currentItem.pickup.location,
-      currentItem.pickup.hours || '',
-      currentItem.pickup.contact || '',
-      currentItem.createdAt
+      id,
+      payload.municipality.name,
+      payload.municipality.type,
+      payload.municipality.contactEmail,
+      payload.item.name,
+      payload.item.category,
+      payload.item.date,
+      payload.item.location,
+      payload.item.status,
+      payload.pickup.location,
+      payload.pickup.hours || '',
+      payload.pickup.contact || '',
+      createdAt
     ];
-    csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-
+    const csv = header + row.map(cell => `"${cell}"`).join(',') + '\n';
     this.downloadFile(csv, `rzeczy_znalezione_${Date.now()}.csv`, 'text/csv');
   }
 
@@ -420,10 +355,9 @@ export class AppComponent implements OnInit {
   }
 
   private loadItems(): void {
-    // Try to load from backend first, fallback to localStorage
     this.foundItemsService.list(0, 100).subscribe({
       next: (data) => {
-        this.items = data as any;
+        this.items = data;
         this.saveItems();
       },
       error: (err) => {
