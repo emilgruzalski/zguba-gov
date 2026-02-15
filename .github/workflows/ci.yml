@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci:
-    uses: emilgruzalski/gh-reusable-workflows/.github/workflows/ci-go.yml@25649e55a5d84bcbd22ab97796d055eb3ec540e3 # v1.1.0
+    uses: emilgruzalski/gh-reusable-workflows/.github/workflows/ci-go.yml@5eab2fe299653adaf03b793b7cc9c45f882bbd24 # v1.1.0
     with:
       image-name: 'zguba-gov'
       go-version-file: 'go.mod'
