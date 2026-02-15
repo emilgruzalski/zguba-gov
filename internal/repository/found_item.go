@@ -162,7 +162,7 @@ func (r *FoundItemRepo) Categories() ([]map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var result []map[string]string
 	for rows.Next() {
@@ -182,15 +182,21 @@ func (r *FoundItemRepo) Categories() ([]map[string]string, error) {
 func (r *FoundItemRepo) Stats() (*model.StatsResponse, error) {
 	stats := &model.StatsResponse{}
 
-	r.db.QueryRow("SELECT COUNT(*) FROM found_items").Scan(&stats.FoundItems.Total)
-	r.db.QueryRow("SELECT COUNT(*) FROM found_items WHERE item_status = 'available'").Scan(&stats.FoundItems.Available)
-	r.db.QueryRow("SELECT COUNT(*) FROM found_items WHERE item_status = 'claimed'").Scan(&stats.FoundItems.Claimed)
+	if err := r.db.QueryRow("SELECT COUNT(*) FROM found_items").Scan(&stats.FoundItems.Total); err != nil {
+		return nil, err
+	}
+	if err := r.db.QueryRow("SELECT COUNT(*) FROM found_items WHERE item_status = 'available'").Scan(&stats.FoundItems.Available); err != nil {
+		return nil, err
+	}
+	if err := r.db.QueryRow("SELECT COUNT(*) FROM found_items WHERE item_status = 'claimed'").Scan(&stats.FoundItems.Claimed); err != nil {
+		return nil, err
+	}
 
 	catRows, err := r.db.Query("SELECT item_category, COUNT(*) as cnt FROM found_items GROUP BY item_category ORDER BY cnt DESC LIMIT 10")
 	if err != nil {
 		return nil, err
 	}
-	defer catRows.Close()
+	defer func() { _ = catRows.Close() }()
 	for catRows.Next() {
 		var c model.CategoryCount
 		if err := catRows.Scan(&c.Category, &c.Count); err != nil {
@@ -203,7 +209,7 @@ func (r *FoundItemRepo) Stats() (*model.StatsResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer munRows.Close()
+	defer func() { _ = munRows.Close() }()
 	for munRows.Next() {
 		var m model.MunicipalityCount
 		if err := munRows.Scan(&m.Name, &m.Count); err != nil {
@@ -241,7 +247,7 @@ func (r *FoundItemRepo) queryItems(query string, args ...any) ([]model.FoundItem
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var items []model.FoundItem
 	for rows.Next() {

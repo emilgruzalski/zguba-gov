@@ -1,0 +1,23 @@
+name: CI - Go
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    uses: emilgruzalski/gh-reusable-workflows/.github/workflows/ci-go.yml@25649e55a5d84bcbd22ab97796d055eb3ec540e3 # v1.1.0
+    with:
+      image-name: 'zguba-gov'
+      go-version-file: 'go.mod'
+      working-directory: '.'
+      dockerfile: './Dockerfile'
+      context: '.'
+      push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: write
+      packages: write
+      security-events: write
+      id-token: write
