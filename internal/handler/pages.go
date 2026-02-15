@@ -238,23 +238,23 @@ func (h *PagesHandler) ExportCSV(c *gin.Context) {
 	filename := fmt.Sprintf("zguba-gov-export-%s.csv", time.Now().Format("2006-01-02"))
 	c.Header("Content-Disposition", "attachment; filename="+filename)
 	c.Header("Content-Type", "text/csv; charset=utf-8")
-	c.Writer.Write([]byte{0xEF, 0xBB, 0xBF}) // UTF-8 BOM
+	_, _ = c.Writer.Write([]byte{0xEF, 0xBB, 0xBF}) // UTF-8 BOM
 
 	w := csv.NewWriter(c.Writer)
-	w.Write([]string{"Pole", "Wartość"})
-	w.Write([]string{"Samorząd", data.MunicipalityName})
-	w.Write([]string{"Typ samorządu", data.MunicipalityType})
-	w.Write([]string{"Email kontaktowy", data.ContactEmail})
-	w.Write([]string{"Nazwa przedmiotu", data.ItemName})
-	w.Write([]string{"Kategoria", data.ItemCategory})
-	w.Write([]string{"Data znalezienia", data.ItemDate})
-	w.Write([]string{"Miejsce znalezienia", data.ItemLocation})
-	w.Write([]string{"Status", data.ItemStatus})
-	w.Write([]string{"Opis", data.ItemDescription})
-	w.Write([]string{"Termin przechowania (dni)", data.StorageDeadline})
-	w.Write([]string{"Miejsce odbioru", data.PickupLocation})
-	w.Write([]string{"Godziny odbioru", data.PickupHours})
-	w.Write([]string{"Osoba kontaktowa", data.ContactPerson})
+	_ = w.Write([]string{"Pole", "Wartość"})
+	_ = w.Write([]string{"Samorząd", data.MunicipalityName})
+	_ = w.Write([]string{"Typ samorządu", data.MunicipalityType})
+	_ = w.Write([]string{"Email kontaktowy", data.ContactEmail})
+	_ = w.Write([]string{"Nazwa przedmiotu", data.ItemName})
+	_ = w.Write([]string{"Kategoria", data.ItemCategory})
+	_ = w.Write([]string{"Data znalezienia", data.ItemDate})
+	_ = w.Write([]string{"Miejsce znalezienia", data.ItemLocation})
+	_ = w.Write([]string{"Status", data.ItemStatus})
+	_ = w.Write([]string{"Opis", data.ItemDescription})
+	_ = w.Write([]string{"Termin przechowania (dni)", data.StorageDeadline})
+	_ = w.Write([]string{"Miejsce odbioru", data.PickupLocation})
+	_ = w.Write([]string{"Godziny odbioru", data.PickupHours})
+	_ = w.Write([]string{"Osoba kontaktowa", data.ContactPerson})
 	w.Flush()
 }
 
@@ -370,5 +370,5 @@ func (h *PagesHandler) renderStep(c *gin.Context, data wizardData) {
 		c.String(http.StatusInternalServerError, "template error: %v", err)
 		return
 	}
-	h.tmpl.ExecuteTemplate(c.Writer, "progress_oob.html", data)
+	_ = h.tmpl.ExecuteTemplate(c.Writer, "progress_oob.html", data)
 }

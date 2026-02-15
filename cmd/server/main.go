@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatal("database:", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	munSvc, err := municipality.NewService()
 	if err != nil {
